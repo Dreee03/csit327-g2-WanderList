@@ -1,5 +1,10 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+import dj_database_url
+import psycopg2
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -50,10 +55,11 @@ TEMPLATES = [
 WSGI_APPLICATION = 'wanderlist.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL'),
+        conn_max_age=600,    # persistent connections 
+        ssl_require=True     # enforce SSL 
+    )
 }
 
 AUTH_PASSWORD_VALIDATORS = [
