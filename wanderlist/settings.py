@@ -54,6 +54,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'wanderlist.wsgi.application'
 
+SUPABASE_URL = os.environ.get('SUPABASE_URL')
+SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
+
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise Exception("SUPABASE_URL or SUPABASE_KEY not found in environment variables.")
+
 DATABASES = {
     'default': dj_database_url.config(
         default=os.environ.get('DATABASE_URL'),
