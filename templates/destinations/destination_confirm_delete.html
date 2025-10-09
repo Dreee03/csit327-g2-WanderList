@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block hero %}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="card shadow-lg border-0 p-5 text-center" style="max-width: 500px; width: 100%;">
+    <div class="mb-3">
+      <h2 class="fw-bold text-danger">⚠️ Confirm Delete</h2>
+      <hr class="mx-auto" style="width: 80px; border: 2px solid #dc3545;">
+    </div>
+
+    <p class="fs-5 mb-4">
+      Are you sure you want to permanently delete  
+      <strong class="text-dark">{{ destination.name }}</strong>?
+    </p>
+
+    <div class="d-flex justify-content-center">
+      <form method="post" class="me-3">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger px-4 shadow-sm">
+          🗑 Yes, Delete
+        </button>
+      </form>
+
+      <a href="{% url 'destination_list' %}" class="btn btn-outline-secondary px-4 shadow-sm">
+        ❌ Cancel
+      </a>
+    </div>
+
+    <p class="text-muted small mt-4">
+      This action <strong>cannot be undone</strong>.
+    </p>
+  </div>
+</div>
+
+<style>
+  .card:hover {
+    transform: translateY(-3px);
+    transition: all 0.3s ease-in-out;
+  }
+</style>
+{% endblock %}
