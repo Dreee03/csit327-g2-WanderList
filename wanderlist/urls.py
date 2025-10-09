@@ -8,5 +8,6 @@ def home_redirect(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
+    path('dashboard/', include('dashboard.urls')),
     path('', home_redirect),
 ]

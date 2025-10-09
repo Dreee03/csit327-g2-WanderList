@@ -64,7 +64,7 @@ def login_view(request):
                 request.session['custom_user_id'] = session_result['custom_user_id'] 
                 request.session['logged_in_username'] = session_result['username'] 
                 messages.success(request, f"Welcome back, {username}!")
-                return redirect('home')
+                return redirect('dashboard')
             else:
                 messages.error(request, session_result.get('message', 'Login failed.'))
         else:
