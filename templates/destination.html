@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Destinations - WanderList</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+    <a class="navbar-brand" href="{% url 'destination:back' %}">WanderList</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    <h2 class="mb-4">Explore Destinations</h2>
+
+    <div class="row">
+      <div class="col-md-5">
+        <div class="card mb-4 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Add / Edit Destination</h5>
+            <form method="post" action="{% url 'destination:create' %}" id="destination-form">
+              {% csrf_token %}
+              <input type="hidden" name="destination_id" id="destination_id">
+
+              <div class="mb-3">
+                <label class="form-label">Name</label>
+                <input name="name" id="name" class="form-control" required>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">City</label>
+                <input name="city" id="city" class="form-control" required>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Country</label>
+                <input name="country" id="country" class="form-control" required>
+              </div>
+
+              <div class="mb-3 row">
+                <div class="col">
+                  <label class="form-label">Latitude</label>
+                  <input name="latitude" id="latitude" class="form-control" type="number" step="any">
+                </div>
+                <div class="col">
+                  <label class="form-label">Longitude</label>
+                  <input name="longitude" id="longitude" class="form-control" type="number" step="any">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Description (optional)</label>
+                <textarea name="description" id="description" class="form-control" rows="3"></textarea>
+              </div>
+
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="button" id="cancel-edit" class="btn btn-secondary">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-7">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Available Destinations</h5>
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>City</th>
+                    <th>Country</th>
+                    <th>Lat</th>
+                    <th>Lng</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for d in destinations %}
+                    <tr>
+                      <td>{{ d.destinationID }}</td>
+                      <td>{{ d.name }}</td>
+                      <td>{{ d.city }}</td>
+                      <td>{{ d.country }}</td>
+                      <td>{{ d.latitude }}</td>
+                      <td>{{ d.longitude }}</td>
+                      <td>
+                        <button class="btn btn-sm btn-outline-primary btn-edit" 
+                                data-id="{{ d.destinationID }}" 
+                                data-name="{{ d.name|escapejs }}"
+                                data-city="{{ d.city|escapejs }}"
+                                data-country="{{ d.country|escapejs }}"
+                                data-lat="{{ d.latitude }}"
+                                data-lng="{{ d.longitude }}"
+                                data-desc="{{ d.description|default:''|escapejs }}">Edit</button>
+
+                        <form method="post" action="{% url 'destination:delete' d.destinationID %}" style="display:inline">
+                          {% csrf_token %}
+                          <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this destination?')">Delete</button>
+                        </form>
+                      </td>
+                    </tr>
+                  {% empty %}
+                    <tr><td colspan="7">No destinations found.</td></tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Populate form for editing when Edit clicked
+    document.addEventListener('click', function (e) {
+      if (e.target.classList.contains('btn-edit')) {
+        const btn = e.target;
+        const id = btn.dataset.id;
+        document.getElementById('destination-form').action = `/destination/edit/${id}/`;
+        document.getElementById('name').value = btn.dataset.name || '';
+        document.getElementById('city').value = btn.dataset.city || '';
+        document.getElementById('country').value = btn.dataset.country || '';
+        document.getElementById('latitude').value = btn.dataset.lat || '';
+        document.getElementById('longitude').value = btn.dataset.lng || '';
+        document.getElementById('description').value = btn.dataset.desc || '';
+      }
+    });
+
+    document.getElementById('cancel-edit').addEventListener('click', function () {
+      document.getElementById('destination-form').action = `{% url 'destination:create' %}`;
+      document.getElementById('destination-form').reset();
+    });
+  </script>
+</body>
+</html>
