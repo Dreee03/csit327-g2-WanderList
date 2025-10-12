@@ -39,11 +39,12 @@ Each destination can be categorized and displayed on an interactive map for easy
 | **Sabornido, Xavier John A.** | Product Owner    | [xavierjohn.sabornido@cit.edu](mailto:xavierjohn.sabornido@cit.edu) |
 | **Sevilla, Michael**          | Business Analyst | [michael.sevilla@cit.edu](mailto:michael.sevilla@cit.edu)           |
 | **Sala, Kirby Klent G.**      | Scrum Master     | [kirbyklent.sala@cit.edu](mailto:kirbyklent.sala@cit.edu)           |
-| **Sabellita, Tycoon A.**      | Developer        | [tycoon.sabellita@cit.edu](mailto:tycoon.sabellita@cit.edu)         |
-| **Sarraga, Andrey Jay**       | Developer        | [andreyjay.sarraga@cit.edu](mailto:andreyjay.sarraga@cit.edu)       |
-| **Tan, Christian Aire D.**    | Developer        | [christianaire.tan@cit.edu](mailto:christianaire.tan@cit.edu)       |
+| **Sabellita, Tycoon A.**      |Back Developer        | [tycoon.sabellita@cit.edu](mailto:tycoon.sabellita@cit.edu)         |
+| **Sarraga, Andrey Jay**       |Front Developer        | [andreyjay.sarraga@cit.edu](mailto:andreyjay.sarraga@cit.edu)       |
+| **Tan, Christian Aire D.**    |Lead Developer        | [christianaire.tan@cit.edu](mailto:christianaire.tan@cit.edu)       |
 
 
 ## Deployed Link
 Not yet available. The project is currently under local development.
+
 
