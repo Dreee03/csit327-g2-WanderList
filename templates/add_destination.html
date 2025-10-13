@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Destination | WanderList</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-50 flex">
+
+  <!-- Sidebar -->
+  <aside class="w-60 bg-white border-r shadow-sm h-screen p-6 flex flex-col">
+    <h1 class="text-2xl font-bold text-blue-600 mb-8">WanderList</h1>
+
+    <nav class="space-y-4 text-gray-700">
+      <a href="{% url 'dashboard' %}" class="block hover:text-blue-600">Dashboard</a>
+      <span class="block font-medium text-blue-600">Add Destination</span>
+      <a href="{% url 'destination:list' %}" class="block hover:text-blue-600">My Destinations</a>
+      <span class="block">Explore</span>
+    </nav>
+
+    <!-- Profile Section -->
+    <div class="mt-auto border-t mt-6 pt-4 flex items-center gap-2 text-gray-600">
+      <img src="{% static 'images/profile.jpg' %}" alt="User" class="w-8 h-8 rounded-full">
+      <span>{{ user.username }}</span>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-10 overflow-y-auto">
+    <div class="max-w-xl mx-auto bg-white rounded-2xl shadow p-8">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-2">Add a New Destination</h2>
+      <p class="text-gray-500 mb-6">Fill in the details below to add a new travel destination to your list.</p>
+
+      <form method="POST" class="space-y-5">
+        {% csrf_token %}
+
+        <!-- Destination Name -->
+        <div>
+          <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Destination Name</label>
+          <input type="text" id="name" name="name" placeholder="e.g., Eiffel Tower"
+                 class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none" required>
+        </div>
+
+        <!-- City -->
+        <div>
+          <label for="city" class="block text-sm font-medium text-gray-700 mb-1">City</label>
+          <input type="text" id="city" name="city" placeholder="e.g., Paris"
+                 class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+        </div>
+
+        <!-- Country -->
+        <div>
+          <label for="country" class="block text-sm font-medium text-gray-700 mb-1">Country</label>
+          <input type="text" id="country" name="country" placeholder="e.g., France"
+                 class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+        </div>
+
+        <!-- Latitude -->
+        <div>
+          <label for="latitude" class="block text-sm font-medium text-gray-700 mb-1">Latitude</label>
+          <input type="number" step="any" id="latitude" name="latitude" placeholder="e.g., 48.8584"
+                 class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+        </div>
+
+        <!-- Longitude -->
+        <div>
+          <label for="longitude" class="block text-sm font-medium text-gray-700 mb-1">Longitude</label>
+          <input type="number" step="any" id="longitude" name="longitude" placeholder="e.g., 2.2945"
+                 class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <textarea id="description" name="description" rows="4" placeholder="Write a short description..."
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"></textarea>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex justify-end gap-3 pt-4">
+          <a href="{% url 'dashboard' %}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">Cancel</a>
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Save Destination</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</body>
+</html>
