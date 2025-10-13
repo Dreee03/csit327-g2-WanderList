@@ -11,8 +11,12 @@ def dashboard_view(request):
     username = request.session.get('logged_in_username', 'User')
     user_obj = SupabaseUser(username=username, is_authenticated=True)
 
+    # Retrieve or create profile record so the navbar can display the profile picture
+    profile, _ = UserProfile.objects.get_or_create(username=username)
+
     context = {
         'user': user_obj,
+        'profile': profile,  # include profile in context
     }
     return render(request, 'dashboard.html', context)
 
