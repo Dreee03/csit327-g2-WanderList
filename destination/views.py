@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 
-from wanderlist.supabase_client import supabase
+from dashboard.supabase_client import supabase
 
 
 def destination_list(request):

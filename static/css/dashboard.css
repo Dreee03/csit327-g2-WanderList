@@ -1,0 +1,402 @@
+/* ================================================
+   DASHBOARD PAGE
+================================================ */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #F9FAFB;
+  margin: 0;
+  color: #111827;
+}
+
+/* ================================================
+   NAVBAR
+================================================ */
+header {
+  width: 100%;
+  background: #F3F4F6; /* soft gray-blue */
+  padding: 0.75rem 2rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  border-bottom: 1px solid #E5E7EB; /* subtle border */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-left a,
+.nav-left a.logo-text {
+  color: #111827; /* dark text for contrast */
+}
+
+.nav-left a.logo-text {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #111827;
+}
+
+.nav-left a {
+  text-decoration: none;
+  color: #111827;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.nav-left a.active {
+  color: #2563EB;  /* blue accent for active page */
+  background: #EFF6FF; /* subtle highlight */
+}
+
+.nav-left a:hover {
+  background: #F3F4F6;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;    /* vertically center the profile */
+  gap: 1rem;              /* spacing if more items are added */
+  margin-right: 1.5rem;   /* push inward from the right edge */
+}
+
+.nav-right img.profile {
+  width: 40px;           /* normal profile size */
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  border: 1px solid #D1D5DB;
+  
+}
+
+.nav-right img.profile:hover {
+  transform: scale(1.05);
+}
+
+/* ================================================
+   MAIN CONTENT
+================================================ */
+main {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* SECTION HEADER */
+main h2 {
+  font-weight: 700;
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
+}
+
+main p {
+  font-size: 0.95rem;
+  color: #6B7280;
+  margin-bottom: 1.5rem;
+}
+
+/* ADD DESTINATION BUTTON */
+.btn-explore {
+  background: #2563EB;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.btn-explore:hover {
+  background: #1D4ED8;
+}
+
+/* FILTER BUTTONS */
+.btn-outline-secondary, .btn-explore.btn-sm {
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-secondary:hover {
+  background: #F3F4F6;
+}
+
+.btn-explore.btn-sm {
+  background: #EFF6FF;
+  color: #2563EB;
+  border: 1px solid #BFDBFE;
+}
+
+.btn-outline-secondary {
+  background: #F3F4F6;
+  border: 1px solid #E5E7EB;
+  color: #374151;
+}
+
+/* ================================================
+   DESTINATION CARDS
+================================================ */
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* horizontal cards */
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.destination-card {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  height: 260px; /* smaller card height */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.destination-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+.destination-card img.card-img-top {
+  height: 140px; /* smaller image */
+  object-fit: cover;
+  width: 100%;
+}
+
+.card-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 4px; /* spacing between title, description, and badge */
+}
+
+.destination-card h5 {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.destination-card p {
+  font-size: 0.8rem;
+  color: #6B7280;
+  margin: 0;
+}
+
+.badge {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  background: #EEF2FF;
+  color: #4F46E5;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.mt-auto {
+  margin-top: auto; /* keep edit/delete at bottom */
+}
+
+.mt-auto a {
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.mt-auto a:first-child {
+  color: #2563EB;
+}
+
+.mt-auto a:last-child {
+  color: #DC2626;
+}
+
+.mt-auto a:hover {
+  opacity: 0.8;
+}
+
+/* FILTER BUTTON SPACING */
+.d-flex.gap-2.mb-4.flex-wrap {
+  margin-bottom: 1.5rem; /* space between filter buttons and cards */
+}
+
+
+
+/* RESPONSIVE ADJUSTMENTS */
+@media (max-width: 991px) {
+  main {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .row {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+.nav-right {
+  display: flex;
+  align-items: center; /* vertically center items */
+  gap: 1rem;           /* space between button and profile */
+}
+
+.nav-right .btn-explore {
+  margin: 0;           /* remove extra margin */
+}
+/* ==========================
+   FILTER BUTTON COLORS
+========================== */
+.filters button {
+  margin-right: 0.5rem;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+/* Active / All button */
+.filters .btn-explore.btn-sm {
+  background: #2563EB;
+  color: #fff;
+  border: 1px solid #2563EB;
+}
+
+.filters .btn-explore.btn-sm:hover {
+  background: #1D4ED8;
+  border-color: #1D4ED8;
+}
+
+/* Planned */
+.filters .btn-outline-secondary:nth-child(2) {
+  background: #FBBF24; /* yellow */
+  color: #92400E;
+  border: 1px solid #FBBF24;
+}
+
+.filters .btn-outline-secondary:nth-child(2):hover {
+  background: #F59E0B;
+  border-color: #F59E0B;
+  color: #fff;
+}
+
+/* Visited */
+.filters .btn-outline-secondary:nth-child(3) {
+  background: #10B981; /* green */
+  color: #064E3B;
+  border: 1px solid #10B981;
+}
+
+.filters .btn-outline-secondary:nth-child(3):hover {
+  background: #059669;
+  border-color: #059669;
+  color: #fff;
+}
+
+/* Dreaming */
+.filters .btn-outline-secondary:nth-child(4) {
+  background: #8B5CF6; /* purple */
+  color: #4C1D95;
+  border: 1px solid #8B5CF6;
+}
+
+.filters .btn-outline-secondary:nth-child(4):hover {
+  background: #7C3AED;
+  border-color: #7C3AED;
+  color: #fff;
+}
+main .btn-explore {
+  margin-bottom: 1.5rem; /* space below the button */
+  height: 38px;           /* align visually with heading */
+}
+
+
+.nav-right {
+  display: flex;
+  align-items: center;    /* vertically center the profile */
+  gap: 1rem;              /* space if you add more items later */
+  padding-right: 1rem;    /* give some space from edge */
+}
+.nav-right .btn-explore {
+  margin: 0;               /* remove extra margin */
+  width: 120px;            /* optional: fix button width */
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.nav-right img.profile {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.nav-right img.profile:hover {
+  transform: scale(1.05);
+}
+/* Flex container to align heading left, button right */
+.top-main {
+  display: flex;                /* enable flexbox */
+  justify-content: space-between; /* heading left, button right */
+  align-items: center;          /* vertical alignment */
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.top-main .btn-explore {
+  height: 35px;
+  padding: 10px 15px;
+  font-size: 0.9rem;
+  border-radius: 15px;
+}
+/* Shared button style for cards */
+.btn-card {
+  font-size: 0.8rem;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+/* Edit button style */
+.btn-edit {
+  background-color: #16a34a; /* green-600 */
+  color: #fff;
+}
+
+.btn-edit:hover {
+  background-color: #15803d; /* green-700 */
+}
+
+/* Delete button style */
+.btn-delete {
+  background-color: #dc2626; /* red-600 */
+  color: #fff;
+  border: none;
+}
+
+.btn-delete:hover {
+  background-color: #b91c1c; /* red-700 */
+}
