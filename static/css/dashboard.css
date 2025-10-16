@@ -6,77 +6,79 @@ body {
   background: #F9FAFB;
   margin: 0;
   color: #111827;
+  overflow-x: hidden; /* removes horizontal scroll */
 }
 
 /* ================================================
    NAVBAR
 ================================================ */
-header {
-  width: 100%;
-  background: #F3F4F6; /* soft gray-blue */
-  padding: 0.75rem 2rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  border-bottom: 1px solid #E5E7EB; /* subtle border */
+header.navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: nowrap; /* prevents wrapping of links and profile */
+  padding: 0.75rem 2rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  background: #F3F4F6;
   position: sticky;
   top: 0;
   z-index: 1000;
+  overflow-x: hidden;
+}
+.nav-right {
+  display: flex;
+  align-items: center;
+  min-width: 40px; /* ensures profile is visible */
 }
 
 .nav-left {
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
+  flex: 1 1 auto; /* allow left section to shrink slightly */
 }
 
 .nav-left a,
 .nav-left a.logo-text {
-  color: #111827; /* dark text for contrast */
-}
-
-.nav-left a.logo-text {
-  font-weight: 700;
-  font-size: 1.25rem;
-  color: #111827;
-}
-
-.nav-left a {
   text-decoration: none;
   color: #111827;
   font-weight: 500;
-  padding: 6px 10px;
+  padding: 6px 12px;
   border-radius: 8px;
   transition: all 0.2s ease;
 }
 
+.nav-left a.logo-text {
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
 .nav-left a.active {
-  color: #2563EB;  /* blue accent for active page */
-  background: #EFF6FF; /* subtle highlight */
+  color: #2563EB;
+  background: #EFF6FF;
 }
 
 .nav-left a:hover {
-  background: #F3F4F6;
+  background: #E5E7EB;
 }
 
 .nav-right {
   display: flex;
-  align-items: center;    /* vertically center the profile */
-  gap: 1rem;              /* spacing if more items are added */
-  margin-right: 1.5rem;   /* push inward from the right edge */
+  align-items: center;
+  margin-left: 0; /* no extra margin needed */
+  flex-shrink: 0; /* ensure profile doesn't shrink */
 }
 
 .nav-right img.profile {
-  width: 40px;           /* normal profile size */
+  width: 40px;
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: all 0.2s ease;
   border: 1px solid #D1D5DB;
-  
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin-left: 12px; /* slight spacing from left section */
 }
 
 .nav-right img.profile:hover {
@@ -86,317 +88,176 @@ header {
 /* ================================================
    MAIN CONTENT
 ================================================ */
-main {
+main.main-content {
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* SECTION HEADER */
-main h2 {
-  font-weight: 700;
-  font-size: 1.75rem;
-  margin-bottom: 0.25rem;
-}
-
-main p {
-  font-size: 0.95rem;
-  color: #6B7280;
+.top-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1.5rem;
 }
 
-/* ADD DESTINATION BUTTON */
-.btn-explore {
-  background: #2563EB;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 18px;
-  font-weight: 600;
+.top-main h2 {
+  font-weight: 700;
+  font-size: 1.6rem;
+  margin-bottom: 0.25rem;
+}
+
+.top-main p.subtext {
   font-size: 0.9rem;
-  transition: all 0.3s ease;
+  color: #6B7280;
+  margin: 0;
 }
 
-.btn-explore:hover {
-  background: #1D4ED8;
+/* ================================================
+   FILTER BUTTONS
+================================================ */
+.filters {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
 }
 
-/* FILTER BUTTONS */
-.btn-outline-secondary, .btn-explore.btn-sm {
-  border-radius: 999px;
-  padding: 6px 14px;
+.filters .filter-btn {
+  padding: 6px 16px;
   font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
   transition: all 0.2s ease;
+  text-align: center;
+  color: #fff;
 }
 
-.btn-outline-secondary:hover {
-  background: #F3F4F6;
-}
-
-.btn-explore.btn-sm {
-  background: #EFF6FF;
-  color: #2563EB;
-  border: 1px solid #BFDBFE;
-}
-
-.btn-outline-secondary {
-  background: #F3F4F6;
-  border: 1px solid #E5E7EB;
-  color: #374151;
-}
+.filters .btn-all { background: #2563EB; }
+.filters .btn-all:hover { background: #1D4ED8; }
+.filters .btn-planned { background: #FBBF24; color: #92400E; }
+.filters .btn-planned:hover { background: #F59E0B; color: #fff; }
+.filters .btn-visited { background: #10B981; color: #064E3B; }
+.filters .btn-visited:hover { background: #059669; color: #fff; }
+.filters .btn-dreaming { background: #8B5CF6; color: #4C1D95; }
+.filters .btn-dreaming:hover { background: #7C3AED; color: #fff; }
 
 /* ================================================
    DESTINATION CARDS
 ================================================ */
-.row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* horizontal cards */
+.destination-grid {
+  display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
-  margin-top: 1.5rem;
+  justify-content: flex-start; /* align cards left */
 }
 
 .destination-card {
+  background: #fff;
   border-radius: 12px;
   overflow: hidden;
-  background: #fff;
-  border: 1px solid #E5E7EB;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
   display: flex;
   flex-direction: column;
-  height: 260px; /* smaller card height */
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  width: 220px;  /* fixed width */
+  min-height: 240px; /* fixed height */
+  flex-shrink: 0;   /* prevents stretching */
 }
 
 .destination-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.12);
 }
 
-.destination-card img.card-img-top {
-  height: 140px; /* smaller image */
-  object-fit: cover;
+/* Card Image */
+.destination-card img.card-img,
+.no-image {
+  height: 120px;
   width: 100%;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
+/* Card Body */
 .card-body {
   padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  gap: 4px; /* spacing between title, description, and badge */
+  justify-content: space-between;
+  flex-grow: 1;
 }
 
-.destination-card h5 {
-  font-weight: 600;
-  font-size: 0.95rem;
-  margin: 0;
-}
+.card-title { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+.card-location,
+.card-description { font-size: 0.85rem; color: #6B7280; margin: 2px 0; }
+.card-description { flex-grow: 1; color: #4B5563; }
 
-.destination-card p {
-  font-size: 0.8rem;
-  color: #6B7280;
-  margin: 0;
-}
-
-.badge {
+.card-badge {
+  display: inline-block;
+  padding: 3px 8px;
   font-size: 0.7rem;
-  padding: 2px 6px;
+  border-radius: 999px;
   background: #EEF2FF;
   color: #4F46E5;
-  border-radius: 999px;
-  display: inline-block;
+  margin-top: 4px;
 }
 
-.mt-auto {
-  margin-top: auto; /* keep edit/delete at bottom */
+/* Card Actions */
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
 }
 
-.mt-auto a {
-  font-size: 0.8rem;
+.btn-edit {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 8px;
   font-weight: 500;
-  text-decoration: none;
-  transition: all 0.2s ease;
+  background-color: #16A34A;
+  color: #fff;
+  border: none;
+  cursor: pointer;
 }
 
-.mt-auto a:first-child {
-  color: #2563EB;
+.btn-edit:hover { background-color: #15803D; }
+
+.btn-delete {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-weight: 500;
+  background-color: #DC2626;
+  color: #fff;
+  border: none;
+  cursor: pointer;
 }
 
-.mt-auto a:last-child {
-  color: #DC2626;
+.btn-delete:hover { background-color: #B91C1C; }
+
+/* Empty State */
+.no-destinations {
+  text-align: center;
+  font-size: 14px;
+  color: #6B7280;
+  margin-top: 15px;
 }
 
-.mt-auto a:hover {
-  opacity: 0.8;
-}
-
-/* FILTER BUTTON SPACING */
-.d-flex.gap-2.mb-4.flex-wrap {
-  margin-bottom: 1.5rem; /* space between filter buttons and cards */
-}
-
-
-
-/* RESPONSIVE ADJUSTMENTS */
+/* ================================================
+   RESPONSIVE
+================================================ */
 @media (max-width: 991px) {
-  main {
-    padding: 1.5rem;
-  }
+  main.main-content { padding: 1.5rem; }
 }
 
 @media (max-width: 767px) {
-  .row {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
-}
-.nav-right {
-  display: flex;
-  align-items: center; /* vertically center items */
-  gap: 1rem;           /* space between button and profile */
-}
-
-.nav-right .btn-explore {
-  margin: 0;           /* remove extra margin */
-}
-/* ==========================
-   FILTER BUTTON COLORS
-========================== */
-.filters button {
-  margin-right: 0.5rem;
-  border-radius: 999px;
-  padding: 6px 14px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  border: none;
-  cursor: pointer;
-}
-
-/* Active / All button */
-.filters .btn-explore.btn-sm {
-  background: #2563EB;
-  color: #fff;
-  border: 1px solid #2563EB;
-}
-
-.filters .btn-explore.btn-sm:hover {
-  background: #1D4ED8;
-  border-color: #1D4ED8;
-}
-
-/* Planned */
-.filters .btn-outline-secondary:nth-child(2) {
-  background: #FBBF24; /* yellow */
-  color: #92400E;
-  border: 1px solid #FBBF24;
-}
-
-.filters .btn-outline-secondary:nth-child(2):hover {
-  background: #F59E0B;
-  border-color: #F59E0B;
-  color: #fff;
-}
-
-/* Visited */
-.filters .btn-outline-secondary:nth-child(3) {
-  background: #10B981; /* green */
-  color: #064E3B;
-  border: 1px solid #10B981;
-}
-
-.filters .btn-outline-secondary:nth-child(3):hover {
-  background: #059669;
-  border-color: #059669;
-  color: #fff;
-}
-
-/* Dreaming */
-.filters .btn-outline-secondary:nth-child(4) {
-  background: #8B5CF6; /* purple */
-  color: #4C1D95;
-  border: 1px solid #8B5CF6;
-}
-
-.filters .btn-outline-secondary:nth-child(4):hover {
-  background: #7C3AED;
-  border-color: #7C3AED;
-  color: #fff;
-}
-main .btn-explore {
-  margin-bottom: 1.5rem; /* space below the button */
-  height: 38px;           /* align visually with heading */
-}
-
-
-.nav-right {
-  display: flex;
-  align-items: center;    /* vertically center the profile */
-  gap: 1rem;              /* space if you add more items later */
-  padding-right: 1rem;    /* give some space from edge */
-}
-.nav-right .btn-explore {
-  margin: 0;               /* remove extra margin */
-  width: 120px;            /* optional: fix button width */
-  text-align: center;
-  font-size: 0.9rem;
-}
-
-.nav-right img.profile {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: all 0.2s ease;
-}
-
-.nav-right img.profile:hover {
-  transform: scale(1.05);
-}
-/* Flex container to align heading left, button right */
-.top-main {
-  display: flex;                /* enable flexbox */
-  justify-content: space-between; /* heading left, button right */
-  align-items: center;          /* vertical alignment */
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.top-main .btn-explore {
-  height: 35px;
-  padding: 10px 15px;
-  font-size: 0.9rem;
-  border-radius: 15px;
-}
-/* Shared button style for cards */
-.btn-card {
-  font-size: 0.8rem;
-  padding: 5px 10px;
-  border-radius: 8px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: all 0.2s ease-in-out;
-  cursor: pointer;
-}
-
-/* Edit button style */
-.btn-edit {
-  background-color: #16a34a; /* green-600 */
-  color: #fff;
-}
-
-.btn-edit:hover {
-  background-color: #15803d; /* green-700 */
-}
-
-/* Delete button style */
-.btn-delete {
-  background-color: #dc2626; /* red-600 */
-  color: #fff;
-  border: none;
-}
-
-.btn-delete:hover {
-  background-color: #b91c1c; /* red-700 */
+  .destination-card { width: 160px; min-height: 200px; }
+  .destination-card img.card-img,
+  .no-image { height: 90px; }
 }
