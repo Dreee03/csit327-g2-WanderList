@@ -47,6 +47,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'wanderlist.middleware.CloseOldConnectionsMiddleware',  # Custom middleware to close old DB connections
 ]
 
 ROOT_URLCONF = 'wanderlist.urls'
@@ -82,7 +83,7 @@ DATABASES = {
         default=os.environ.get('DATABASE_URL'),
         conn_max_age=600,
         ssl_require=True
-    )
+    )  
 }
 
 # Password validation
