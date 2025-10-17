@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_protect
 
 from dashboard.supabase_client import supabase
 
@@ -22,6 +23,7 @@ def destination_list(request):
 	}
 	return render(request, 'destination.html', context)
 
+@csrf_protect
 def add_destination(request):
     """Display the Add Destination form."""
     if request.method == 'POST':
@@ -30,14 +32,24 @@ def add_destination(request):
     return render(request, 'add_destination.html')
 
 
+@csrf_protect
 @require_http_methods(["POST"])
 def create_destination(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
-        city = request.POST.get('city')
-        country = request.POST.get('country')
-        description = request.POST.get('description')
-        category = request.POST.get('category')  # now stores text directly
+        # Basic server-side validation and normalization
+        name = (request.POST.get('name') or '').strip()
+        city = (request.POST.get('city') or '').strip()
+        country = (request.POST.get('country') or '').strip()
+        description = (request.POST.get('description') or '').strip()
+        category = (request.POST.get('category') or '').strip()  # now stores text directly
+
+        if not name or not city or not country or not category:
+            messages.error(request, 'Please fill out all required fields.')
+            return redirect('destination:add_destination')
+
+        if len(description) > 500:
+            messages.error(request, 'Description must be 500 characters or fewer.')
+            return redirect('destination:add_destination')
 
         data = {
             'name': name,
@@ -61,6 +73,7 @@ def create_destination(request):
 
 
 
+@csrf_protect
 def edit_destination(request, destination_id):
     """Fetch and update a destination from Supabase."""
     try:
@@ -77,15 +90,19 @@ def edit_destination(request, destination_id):
 
     # ✅ Handle POST (update data)
     if request.method == 'POST':
-        name = request.POST.get('name')
-        city = request.POST.get('city')
-        country = request.POST.get('country')
-        description = request.POST.get('description')
-        category = request.POST.get('category')
+        name = (request.POST.get('name') or '').strip()
+        city = (request.POST.get('city') or '').strip()
+        country = (request.POST.get('country') or '').strip()
+        description = (request.POST.get('description') or '').strip()
+        category = (request.POST.get('category') or '').strip()
         
-        if not name or not city or not country:
+        if not name or not city or not country or not category:
             messages.error(request, "Please fill out all required fields.")
-            return render(request, 'destination/edit_destination.html', {'destination': destination})
+            return render(request, 'edit_destination.html', {'destination': destination})
+
+        if len(description) > 500:
+            messages.error(request, 'Description must be 500 characters or fewer.')
+            return render(request, 'edit_destination.html', {'destination': destination})
 
         payload = {
             'name': name,
@@ -100,7 +117,7 @@ def edit_destination(request, destination_id):
             messages.success(request, 'Destination updated successfully!')
             return redirect(reverse('destination:list'))
         except Exception as e:
-            messages.error(request, f'Could not update destination: {e}')
+            messages.error(request, 'Could not update destination. Please try again later.')
 
     # ✅ Handle GET (load page)
     return render(request, 'edit_destination.html', {'destination': destination})
