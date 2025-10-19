@@ -40,16 +40,16 @@
 
     <!-- Filter Buttons -->
     <div class="filters">
-  <button class="filter-btn btn-all active">All</button>
-  <button class="filter-btn btn-planned">Planned</button>
-  <button class="filter-btn btn-visited">Visited</button>
-  <button class="filter-btn btn-dreaming">Dreaming</button>
-</div>
+      <button class="filter-btn btn-all active" data-filter="all">All</button>
+      <button class="filter-btn btn-planned" data-filter="Planned">Planned</button>
+      <button class="filter-btn btn-visited" data-filter="Visited">Visited</button>
+      <button class="filter-btn btn-dreaming" data-filter="Dreaming">Dreaming</button>
+    </div>
 
     <!-- Destination Cards -->
     <div class="destination-grid">
       {% for destination in destinations %}
-      <div class="destination-card">
+      <div class="destination-card" data-category="{{ destination.category|default_if_none:'' }}">
 
         <div class="card-gradient"></div>
 
@@ -85,7 +85,65 @@
       {% empty %}
         <p class="no-destinations">No destinations added yet.</p>
       {% endfor %}
+      <!-- Client-side no-results message shown when filtering yields zero cards -->
+      <p class="no-results" style="display:none;">No destinations match this filter.</p>
     </div>
+
+    <!-- Using Inline JS to filter destination cards by category
+     Inline JS ensures that the filtering happens on the client side without additional requests to the server -->
+    <script>
+      (function() {
+        const buttons = document.querySelectorAll('.filter-btn');
+        const cards = document.querySelectorAll('.destination-card');
+        const noResults = document.querySelector('.no-results');
+        const noDestinationsServer = document.querySelector('.no-destinations');
+
+        function applyFilter(filter) {
+          let visible = 0;
+
+          cards.forEach(card => {
+            const cat = (card.getAttribute('data-category') || '').trim();
+            if (filter === 'all' || !filter) {
+              card.style.display = '';
+              visible++;
+            } else if (cat.toLowerCase() === filter.toLowerCase()) {
+              card.style.display = '';
+              visible++;
+            } else {
+              card.style.display = 'none';
+            }
+          });
+
+          // If there are no cards at all from server, keep server message
+          if (cards.length === 0) {
+            if (noDestinationsServer) noDestinationsServer.style.display = '';
+            if (noResults) noResults.style.display = 'none';
+            return;
+          }
+
+          // Hide server-side empty message once we have client-side cards
+          if (noDestinationsServer) noDestinationsServer.style.display = 'none';
+
+          if (visible === 0) {
+            if (noResults) noResults.style.display = '';
+          } else {
+            if (noResults) noResults.style.display = 'none';
+          }
+        }
+
+        buttons.forEach(btn => {
+          btn.addEventListener('click', function() {
+            buttons.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const filter = this.getAttribute('data-filter');
+            applyFilter(filter);
+          });
+        });
+
+        // Ensure initial filter is 'all'
+        applyFilter('all');
+      })();
+    </script>
 
   </main>
 
