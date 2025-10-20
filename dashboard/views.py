@@ -7,11 +7,7 @@ from django.contrib import messages
 
 
 def dashboard_view(request):
-<<<<<<< HEAD
-    """Render the dashboard.html with destinations from Supabase."""
-=======
     """Render the dashboard.html with destinations from Supabase + search & filter."""
->>>>>>> d516e5f (Initial project commit with dashboard search and filter feature)
     if 'supabase_access_token' not in request.session:
         return redirect('login')
 
@@ -21,16 +17,6 @@ def dashboard_view(request):
     # Retrieve or create profile record so the navbar can display the profile picture
     profile, _ = UserProfile.objects.get_or_create(username=username)
 
-<<<<<<< HEAD
-    # Fetch destinations from Supabase
-    response = supabase.table("destination").select("*").execute()
-    destination = response.data if response.data else []
-
-    context = {
-        'user': user_obj,
-        'profile': profile,
-        'destinations': destination,  # 👈 pass this to your template
-=======
     # --- NEW: Get search and filter parameters from GET request ---
     query = request.GET.get('q', '').strip()
     category = request.GET.get('category', '').strip()
@@ -61,10 +47,8 @@ def dashboard_view(request):
         'destinations': destination,
         'query': query,
         'category': category,
->>>>>>> d516e5f (Initial project commit with dashboard search and filter feature)
     }
     return render(request, 'dashboard.html', context)
-
 
 
 def profile_view(request):
@@ -94,12 +78,8 @@ def profile_view(request):
     return render(request, 'profile.html', context)
 
 
-
 def add_destination(request):
-<<<<<<< HEAD
-=======
     """Add a new destination to Supabase."""
->>>>>>> d516e5f (Initial project commit with dashboard search and filter feature)
     if request.method == "POST":
         name = request.POST.get("name")
         city = request.POST.get("city")
@@ -107,10 +87,7 @@ def add_destination(request):
         latitude = request.POST.get("latitude")
         longitude = request.POST.get("longitude")
         description = request.POST.get("description")
-<<<<<<< HEAD
-=======
         category = request.POST.get("category", "")  # ✅ optional filter field
->>>>>>> d516e5f (Initial project commit with dashboard search and filter feature)
 
         data = {
             "name": name,
@@ -119,10 +96,7 @@ def add_destination(request):
             "latitude": float(latitude) if latitude else None,
             "longitude": float(longitude) if longitude else None,
             "description": description,
-<<<<<<< HEAD
-=======
             "category": category,
->>>>>>> d516e5f (Initial project commit with dashboard search and filter feature)
         }
 
         try:
@@ -131,14 +105,7 @@ def add_destination(request):
         except Exception as e:
             messages.error(request, f"Could not add destination: {e}")
 
-<<<<<<< HEAD
-        return redirect("dashboard")  # ✅ always return
-
-    # If GET request, render the form
-    return render(request, "add_destination.html")  # ✅ also returns an HttpResponse
-=======
         return redirect("dashboard")
 
     # If GET request, render the form
     return render(request, "add_destination.html")
->>>>>>> d516e5f (Initial project commit with dashboard search and filter feature)
