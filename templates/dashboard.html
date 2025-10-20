@@ -6,7 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard | WanderList</title>
   <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=3">
+<<<<<<< HEAD
 
+=======
+>>>>>>> d516e5f (Initial project commit with dashboard search and filter feature)
 </head>
 <body>
 
@@ -38,6 +41,37 @@
       </div>
     </div>
 
+<<<<<<< HEAD
+=======
+    <!-- 🔍 Search + Filter Bar -->
+    <div class="search-filter-bar" style="display:flex; gap:10px; align-items:center; margin-bottom:20px;">
+      <input 
+        type="text" 
+        id="searchInput"
+        placeholder="Search destinations..." 
+        style="flex:1; padding:12px 15px; border-radius:8px; border:1px solid #ccc; font-size:16px;"
+      >
+
+      <select 
+        id="categoryFilter"
+        style="padding:12px 15px; border-radius:8px; border:1px solid #ccc; font-size:16px;"
+      >
+        <option value="">All Categories</option>
+        <option value="Planned">Planned</option>
+        <option value="Visited">Visited</option>
+        <option value="Dreaming">Dreaming</option>
+      </select>
+
+      <!-- ✅ Search Button -->
+      <button 
+        id="searchButton"
+        style="background-color:#007bff; color:white; border:none; padding:12px 25px; border-radius:8px; cursor:pointer; font-size:16px;"
+      >
+        🔍 Search
+      </button>
+    </div>
+
+>>>>>>> d516e5f (Initial project commit with dashboard search and filter feature)
     <!-- Filter Buttons -->
     <div class="filters">
       <button class="filter-btn btn-all active" data-filter="all">All</button>
@@ -50,7 +84,10 @@
     <div class="destination-grid">
       {% for destination in destinations %}
       <div class="destination-card" data-category="{{ destination.category|default_if_none:'' }}">
+<<<<<<< HEAD
 
+=======
+>>>>>>> d516e5f (Initial project commit with dashboard search and filter feature)
         <div class="card-gradient"></div>
 
         {% if destination.image_url %}
@@ -72,6 +109,7 @@
           {% endif %}
 
           <div class="card-actions">
+<<<<<<< HEAD
   <a href="{% url 'destination:edit' destination.destinationID %}" class="btn-edit">Edit</a>
 
   <form method="POST" action="{% url 'destination:delete' destination.destinationID %}">
@@ -80,17 +118,32 @@
   </form>
 </div>
 
+=======
+            <a href="{% url 'destination:edit' destination.destinationID %}" class="btn-edit">Edit</a>
+            <form method="POST" action="{% url 'destination:delete' destination.destinationID %}">
+              {% csrf_token %}
+              <button type="submit" class="btn-delete">Delete</button>
+            </form>
+          </div>
+>>>>>>> d516e5f (Initial project commit with dashboard search and filter feature)
         </div>
       </div>
       {% empty %}
         <p class="no-destinations">No destinations added yet.</p>
       {% endfor %}
+<<<<<<< HEAD
       <!-- Client-side no-results message shown when filtering yields zero cards -->
       <p class="no-results" style="display:none;">No destinations match this filter.</p>
     </div>
 
     <!-- Using Inline JS to filter destination cards by category
      Inline JS ensures that the filtering happens on the client side without additional requests to the server -->
+=======
+      <p class="no-results" style="display:none;">No destinations match this filter.</p>
+    </div>
+
+    <!-- Category Filter JS -->
+>>>>>>> d516e5f (Initial project commit with dashboard search and filter feature)
     <script>
       (function() {
         const buttons = document.querySelectorAll('.filter-btn');
@@ -100,7 +153,10 @@
 
         function applyFilter(filter) {
           let visible = 0;
+<<<<<<< HEAD
 
+=======
+>>>>>>> d516e5f (Initial project commit with dashboard search and filter feature)
           cards.forEach(card => {
             const cat = (card.getAttribute('data-category') || '').trim();
             if (filter === 'all' || !filter) {
@@ -114,16 +170,23 @@
             }
           });
 
+<<<<<<< HEAD
           // If there are no cards at all from server, keep server message
+=======
+>>>>>>> d516e5f (Initial project commit with dashboard search and filter feature)
           if (cards.length === 0) {
             if (noDestinationsServer) noDestinationsServer.style.display = '';
             if (noResults) noResults.style.display = 'none';
             return;
           }
 
+<<<<<<< HEAD
           // Hide server-side empty message once we have client-side cards
           if (noDestinationsServer) noDestinationsServer.style.display = 'none';
 
+=======
+          if (noDestinationsServer) noDestinationsServer.style.display = 'none';
+>>>>>>> d516e5f (Initial project commit with dashboard search and filter feature)
           if (visible === 0) {
             if (noResults) noResults.style.display = '';
           } else {
@@ -140,12 +203,57 @@
           });
         });
 
+<<<<<<< HEAD
         // Ensure initial filter is 'all'
+=======
+>>>>>>> d516e5f (Initial project commit with dashboard search and filter feature)
         applyFilter('all');
       })();
     </script>
 
+<<<<<<< HEAD
   </main>
 
+=======
+    <!-- ✅ NEW: Live Search + Button -->
+    <script>
+      (function() {
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const cards = document.querySelectorAll('.destination-card');
+        const noResults = document.querySelector('.no-results');
+
+        function filterDestinations() {
+          const query = searchInput.value.toLowerCase();
+          const selectedCategory = categoryFilter.value.toLowerCase();
+          let visibleCount = 0;
+
+          cards.forEach(card => {
+            const name = card.querySelector('.card-title').textContent.toLowerCase();
+            const category = (card.getAttribute('data-category') || '').toLowerCase();
+
+            const matchesName = name.startsWith(query);
+            const matchesCategory = !selectedCategory || category === selectedCategory;
+
+            if (matchesName && matchesCategory) {
+              card.style.display = '';
+              visibleCount++;
+            } else {
+              card.style.display = 'none';
+            }
+          });
+
+          noResults.style.display = visibleCount === 0 ? '' : 'none';
+        }
+
+        searchInput.addEventListener('input', filterDestinations);
+        categoryFilter.addEventListener('change', filterDestinations);
+        searchButton.addEventListener('click', filterDestinations);
+      })();
+    </script>
+
+  </main>
+>>>>>>> d516e5f (Initial project commit with dashboard search and filter feature)
 </body>
 </html>
