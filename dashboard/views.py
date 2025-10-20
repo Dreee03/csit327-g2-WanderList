@@ -66,6 +66,7 @@ def profile_view(request):
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
+            messages.success(request, "Profile updated successfully!")
             return redirect('profile')
     else:
         form = ProfileForm(instance=profile)
@@ -78,6 +79,7 @@ def profile_view(request):
     return render(request, 'profile.html', context)
 
 
+# ✅ ADD DESTINATION
 def add_destination(request):
     """Add a new destination to Supabase."""
     if request.method == "POST":
@@ -87,7 +89,7 @@ def add_destination(request):
         latitude = request.POST.get("latitude")
         longitude = request.POST.get("longitude")
         description = request.POST.get("description")
-        category = request.POST.get("category", "")  # ✅ optional filter field
+        category = request.POST.get("category", "")
 
         data = {
             "name": name,
@@ -101,11 +103,55 @@ def add_destination(request):
 
         try:
             supabase.table("destination").insert(data).execute()
-            messages.success(request, "Destination added successfully!")
+            messages.success(request, "✅ Destination added successfully!")
         except Exception as e:
-            messages.error(request, f"Could not add destination: {e}")
+            messages.error(request, f"❌ Could not add destination: {e}")
 
         return redirect("dashboard")
 
-    # If GET request, render the form
     return render(request, "add_destination.html")
+
+
+# ✅ EDIT DESTINATION
+def edit_destination(request, destination_id):
+    """Edit an existing destination."""
+    if request.method == "POST":
+        name = request.POST.get("name")
+        city = request.POST.get("city")
+        country = request.POST.get("country")
+        latitude = request.POST.get("latitude")
+        longitude = request.POST.get("longitude")
+        description = request.POST.get("description")
+        category = request.POST.get("category", "")
+
+        try:
+            supabase.table("destination").update({
+                "name": name,
+                "city": city,
+                "country": country,
+                "latitude": float(latitude) if latitude else None,
+                "longitude": float(longitude) if longitude else None,
+                "description": description,
+                "category": category,
+            }).eq("destinationID", destination_id).execute()
+            messages.success(request, "✏️ Destination updated successfully!")
+        except Exception as e:
+            messages.error(request, f"❌ Could not update destination: {e}")
+
+        return redirect("dashboard")
+
+    # Fetch destination details to prefill form
+    destination = supabase.table("destination").select("*").eq("destinationID", destination_id).execute().data[0]
+    return render(request, "edit_destination.html", {"destination": destination})
+
+
+# ✅ DELETE DESTINATION
+def delete_destination(request, destination_id):
+    """Delete a destination with confirmation."""
+    if request.method == "POST":
+        try:
+            supabase.table("destination").delete().eq("destinationID", destination_id).execute()
+            messages.success(request, "🗑️ Destination deleted successfully!")
+        except Exception as e:
+            messages.error(request, f"❌ Could not delete destination: {e}")
+        return redirect("dashboard")
