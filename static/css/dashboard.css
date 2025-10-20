@@ -3,9 +3,9 @@
 ================================================ */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #F9FAFB;
+  background: var(--wl-bg);
   margin: 0;
-  color: #111827;
+  color: var(--wl-text);
   overflow-x: hidden; /* removes horizontal scroll */
 }
 
@@ -19,7 +19,7 @@ header.navbar {
   flex-wrap: nowrap; /* prevents wrapping of links and profile */
   padding: 0.75rem 2rem;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  background: #F3F4F6;
+  background: var(--wl-surface);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -42,7 +42,7 @@ header.navbar {
 .nav-left a,
 .nav-left a.logo-text {
   text-decoration: none;
-  color: #111827;
+  color: var(--wl-text);
   font-weight: 500;
   padding: 6px 12px;
   border-radius: 8px;
@@ -55,12 +55,12 @@ header.navbar {
 }
 
 .nav-left a.active {
-  color: #2563EB;
-  background: #EFF6FF;
+  color: var(--wl-primary);
+  background: var(--wl-primary-50);
 }
 
 .nav-left a:hover {
-  background: #E5E7EB;
+  background: var(--wl-sky);
 }
 
 .nav-right {
@@ -75,7 +75,7 @@ header.navbar {
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid #D1D5DB;
+  border: 1px solid var(--wl-border);
   cursor: pointer;
   transition: transform 0.2s ease;
   margin-left: 12px; /* slight spacing from left section */
@@ -109,7 +109,7 @@ main.main-content {
 
 .top-main p.subtext {
   font-size: 0.9rem;
-  color: #6B7280;
+  color: var(--wl-muted);
   margin: 0;
 }
 
@@ -135,14 +135,14 @@ main.main-content {
   color: #fff;
 }
 
-.filters .btn-all { background: #2563EB; }
-.filters .btn-all:hover { background: #1D4ED8; }
-.filters .btn-planned { background: #FBBF24; color: #92400E; }
-.filters .btn-planned:hover { background: #F59E0B; color: #fff; }
-.filters .btn-visited { background: #10B981; color: #064E3B; }
-.filters .btn-visited:hover { background: #059669; color: #fff; }
-.filters .btn-dreaming { background: #8B5CF6; color: #4C1D95; }
-.filters .btn-dreaming:hover { background: #7C3AED; color: #fff; }
+.filters .btn-all { background: var(--wl-primary); }
+.filters .btn-all:hover { background: var(--wl-primary-700); }
+.filters .btn-planned { background: var(--wl-accent); color: var(--wl-text); }
+.filters .btn-planned:hover { background: var(--wl-teal); color: #fff; }
+.filters .btn-visited { background: var(--wl-teal); color: #fff; }
+.filters .btn-visited:hover { background: var(--wl-deep); color: #fff; }
+.filters .btn-dreaming { background: var(--wl-sky); color: var(--wl-text); }
+.filters .btn-dreaming:hover { background: var(--wl-blue); color: #fff; }
 
 /* ================================================
    DESTINATION CARDS
@@ -203,8 +203,8 @@ main.main-content {
   padding: 3px 8px;
   font-size: 0.7rem;
   border-radius: 999px;
-  background: #EEF2FF;
-  color: #4F46E5;
+  background: var(--wl-primary-50);
+  color: var(--wl-primary);
   margin-top: 4px;
 }
 
@@ -220,32 +220,32 @@ main.main-content {
   padding: 4px 8px;
   border-radius: 8px;
   font-weight: 500;
-  background-color: #16A34A;
+  background-color: var(--wl-teal);
   color: #fff;
   border: none;
   cursor: pointer;
 }
 
-.btn-edit:hover { background-color: #15803D; }
+.btn-edit:hover { background-color: var(--wl-deep); }
 
 .btn-delete {
   font-size: 0.75rem;
   padding: 4px 8px;
   border-radius: 8px;
   font-weight: 500;
-  background-color: #DC2626;
+  background-color: var(--wl-danger);
   color: #fff;
   border: none;
   cursor: pointer;
 }
 
-.btn-delete:hover { background-color: #B91C1C; }
+.btn-delete:hover { background-color: var(--wl-danger); opacity: 0.8; }
 
 /* Empty State */
 .no-destinations {
   text-align: center;
   font-size: 14px;
-  color: #6B7280;
+  color: var(--wl-muted);
   margin-top: 15px;
 }
 

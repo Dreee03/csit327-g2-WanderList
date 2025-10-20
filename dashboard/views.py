@@ -4,6 +4,7 @@ from .models import UserProfile
 from .forms import ProfileForm
 from .supabase_client import supabase
 from django.contrib import messages
+import json
 
 
 def dashboard_view(request):
@@ -49,6 +50,32 @@ def dashboard_view(request):
         'category': category,
     }
     return render(request, 'dashboard.html', context)
+
+
+def my_lists_view(request):
+    """Render a Leaflet map with all destinations as markers."""
+    if 'supabase_access_token' not in request.session:
+        return redirect('login')
+
+    username = request.session.get('logged_in_username', 'User')
+    user_obj = SupabaseUser(username=username, is_authenticated=True)
+
+    profile, _ = UserProfile.objects.get_or_create(username=username)
+
+    try:
+        response = supabase.table("destination").select("*").execute()
+        destinations = response.data if response.data else []
+    except Exception as e:
+        destinations = []
+        messages.error(request, f"Could not fetch destinations: {e}")
+
+    context = {
+        'user': user_obj,
+        'profile': profile,
+        # Serialize to JSON for safe JS consumption in template
+        'destinations_json': json.dumps(destinations),
+    }
+    return render(request, 'my_lists.html', context)
 
 
 def profile_view(request):
