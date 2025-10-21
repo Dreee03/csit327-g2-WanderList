@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard | WanderList</title>
   <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=3">
-
 </head>
 <body>
 
@@ -40,17 +39,16 @@
 
     <!-- Filter Buttons -->
     <div class="filters">
-  <button class="filter-btn btn-all active">All</button>
-  <button class="filter-btn btn-planned">Planned</button>
-  <button class="filter-btn btn-visited">Visited</button>
-  <button class="filter-btn btn-dreaming">Dreaming</button>
-</div>
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="planned">Planned</button>
+      <button class="filter-btn" data-filter="visited">Visited</button>
+      <button class="filter-btn" data-filter="dreaming">Dreaming</button>
+    </div>
 
     <!-- Destination Cards -->
     <div class="destination-grid">
       {% for destination in destinations %}
-      <div class="destination-card">
-
+      <div class="destination-card" data-category="{{ destination.category|lower }}">
         <div class="card-gradient"></div>
 
         {% if destination.image_url %}
@@ -61,33 +59,60 @@
 
         <div class="card-body">
           <h5 class="card-title">{{ destination.name }}</h5>
+
           {% if destination.city and destination.country %}
             <p class="card-location">{{ destination.city }}, {{ destination.country }}</p>
           {% endif %}
+
           {% if destination.description %}
             <p class="card-description">{{ destination.description|truncatechars:100 }}</p>
           {% endif %}
+
           {% if destination.category %}
             <span class="card-badge">{{ destination.category }}</span>
           {% endif %}
 
           <div class="card-actions">
-  <a href="{% url 'destination:edit' destination.destinationID %}" class="btn-edit">Edit</a>
-
-  <form method="POST" action="{% url 'destination:delete' destination.destinationID %}">
-    {% csrf_token %}
-    <button type="submit" class="btn-delete">Delete</button>
-  </form>
-</div>
-
+            <a href="{% url 'destination:edit' destination.destinationID %}" class="btn-edit">Edit</a>
+            <form method="POST" action="{% url 'destination:delete' destination.destinationID %}">
+              {% csrf_token %}
+              <button type="submit" class="btn-delete">Delete</button>
+            </form>
+          </div>
         </div>
       </div>
       {% empty %}
         <p class="no-destinations">No destinations added yet.</p>
       {% endfor %}
     </div>
-
   </main>
+
+  <!-- JS Filter Logic -->
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    const cards = document.querySelectorAll(".destination-card");
+
+    filterButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        // Remove active state from all buttons
+        filterButtons.forEach(btn => btn.classList.remove("active"));
+        button.classList.add("active");
+
+        const filter = button.dataset.filter;
+
+        cards.forEach(card => {
+          const category = card.dataset.category;
+          if (filter === "all" || category === filter) {
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      });
+    });
+  });
+  </script>
 
 </body>
 </html>

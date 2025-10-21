@@ -66,6 +66,7 @@ def add_destination(request):
         latitude = request.POST.get("latitude")
         longitude = request.POST.get("longitude")
         description = request.POST.get("description")
+        category = request.POST.get("category")  # ✅ new field from form
 
         data = {
             "name": name,
@@ -74,6 +75,7 @@ def add_destination(request):
             "latitude": float(latitude) if latitude else None,
             "longitude": float(longitude) if longitude else None,
             "description": description,
+            "category": category,  # ✅ include in Supabase
         }
 
         try:
@@ -82,7 +84,9 @@ def add_destination(request):
         except Exception as e:
             messages.error(request, f"Could not add destination: {e}")
 
-        return redirect("dashboard")  # ✅ always return
+        return redirect("dashboard")  # ✅ redirects back to dashboard after save
 
-    # If GET request, render the form
-    return render(request, "add_destination.html")  # ✅ also returns an HttpResponse
+    # If GET request, render form
+    return render(request, "add_destination.html")
+
+
