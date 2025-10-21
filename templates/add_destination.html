@@ -5,11 +5,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Add Destination | WanderList</title>
+  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
   <link rel="stylesheet" href="{% static 'css/add_destination.css' %}">
 </head>
 <body>
   <div class="form-container">
     <h1>Add a New Destination</h1>
+    {% if messages %}
+    <div>
+      {% for message in messages %}
+        <div class="alert {{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
     <form action="{% url 'destination:create' %}" method="POST">
   {% csrf_token %}
   
@@ -17,10 +25,10 @@
   <input type="text" id="name" name="name" required>
 
   <label for="city">City:</label>
-  <input type="text" id="city" name="city">
+  <input type="text" id="city" name="city" required>
 
   <label for="country">Country:</label>
-  <input type="text" id="country" name="country">
+  <input type="text" id="country" name="country" required>
 
   <!-- ✅ New Category Dropdown -->
   <label for="category">Category:</label>
@@ -33,7 +41,7 @@
 
 
   <label for="description">Description:</label>
-  <textarea id="description" name="description" rows="4"></textarea>
+  <textarea id="description" name="description" rows="4" minlength="0" maxlength="500"></textarea>
 
   <div class="button-container">
     <button type="submit" class="btn-save">Save</button>

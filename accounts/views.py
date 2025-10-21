@@ -33,15 +33,22 @@ def register_view(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
 
-            result = register_user(email, password, username)
+            try:
+                result = register_user(email, password, username)
+            except Exception:
+                # Avoid leaking internal errors
+                messages.error(request, 'Registration service is temporarily unavailable. Please try again later.')
+                return render(request, 'register.html', {'form': form})
 
             if result.get('success'):
                 messages.success(request, 'Registration successful. Please check your email to confirm your account.')
                 return redirect('login')
             else:
-                messages.error(request, result.get('message', 'Registration failed.'))
+                # Show a generic error if backend gives no safe message
+                safe_message = result.get('message') or 'Registration failed. Please verify your details and try again.'
+                messages.error(request, safe_message)
         else:
-            messages.error(request, "Please correct errors below.")
+            messages.error(request, "Please correct the errors below.")
     else:
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
@@ -54,8 +61,11 @@ def login_view(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             
-            # Use the Supabase utility function to authenticate
-            session_result = login_user(username, password)
+            try:
+                session_result = login_user(username, password)
+            except Exception:
+                messages.error(request, 'Login service is temporarily unavailable. Please try again later.')
+                return render(request, 'login.html', {'form': form})
             
             if session_result.get('success'):
                 # Store Supabase session and user IDs
@@ -66,11 +76,9 @@ def login_view(request):
                 messages.success(request, f"Welcome back, {username}!")
                 return redirect('dashboard')
             else:
-                messages.error(request, session_result.get('message', 'Login failed.'))
+                messages.error(request, 'Invalid username or password.')
         else:
-             # Form is not valid (e.g., fields missing)
-             messages.error(request, "Please enter a valid username and password.")
-    
+            messages.error(request, "Please enter a valid username and password.")
     else:
         form = CustomAuthenticationForm()
     return render(request, 'login.html', {'form': form})
