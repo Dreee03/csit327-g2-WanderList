@@ -5,39 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard | WanderList</title>
-  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
   <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=3">
-
-  <style>
-    /* ✅ Success/Error Messages Styling */
-    .message-container {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .alert {
-      padding: 12px 18px;
-      border-radius: 8px;
-      color: #fff;
-      font-size: 16px;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-      opacity: 0.95;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .alert-success { background-color: #28a745; }
-    .alert-error { background-color: #dc3545; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
 </head>
 <body>
 
@@ -47,7 +15,7 @@
       <a href="#" class="logo-text">WanderList</a>
       <a href="#" class="nav-link active">Dashboard</a>
       <a href="{% url 'destination:list' %}" class="nav-link">Destinations</a>
-      <a href="{% url 'my_lists' %}" class="nav-link">My Maps</a>
+      <a href="#" class="nav-link">My Lists</a>
       <a href="#" class="nav-link">Explore</a>
     </div>
 
@@ -59,17 +27,6 @@
     </div>
   </header>
 
-  <!-- ✅ Flash Messages -->
-  {% if messages %}
-  <div class="message-container">
-    {% for message in messages %}
-      <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
-        {{ message }}
-      </div>
-    {% endfor %}
-  </div>
-  {% endif %}
-
   <!-- Main Content -->
   <main class="main-content">
 
@@ -80,46 +37,18 @@
       </div>
     </div>
 
-    <!-- 🔍 Search + Filter Bar -->
-    <div class="search-filter-bar" style="display:flex; gap:10px; align-items:center; margin-bottom:20px;">
-      <input 
-        type="text" 
-        id="searchInput"
-        placeholder="Search destinations..." 
-        style="flex:1; padding:12px 15px; border-radius:8px; border:1px solid #ccc; font-size:16px;"
-      >
-
-      <select 
-        id="categoryFilter"
-        style="padding:12px 15px; border-radius:8px; border:1px solid #ccc; font-size:16px;"
-      >
-        <option value="">All Categories</option>
-        <option value="Planned">Planned</option>
-        <option value="Visited">Visited</option>
-        <option value="Dreaming">Dreaming</option>
-      </select>
-
-      <!-- ✅ Search Button -->
-      <button 
-        id="searchButton"
-        style="background-color:#007bff; color:white; border:none; padding:12px 25px; border-radius:8px; cursor:pointer; font-size:16px;"
-      >
-        🔍 Search
-      </button>
-    </div>
-
     <!-- Filter Buttons -->
     <div class="filters">
-      <button class="filter-btn btn-all active" data-filter="all">All</button>
-      <button class="filter-btn btn-planned" data-filter="Planned">Planned</button>
-      <button class="filter-btn btn-visited" data-filter="Visited">Visited</button>
-      <button class="filter-btn btn-dreaming" data-filter="Dreaming">Dreaming</button>
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="planned">Planned</button>
+      <button class="filter-btn" data-filter="visited">Visited</button>
+      <button class="filter-btn" data-filter="dreaming">Dreaming</button>
     </div>
 
     <!-- Destination Cards -->
     <div class="destination-grid">
       {% for destination in destinations %}
-      <div class="destination-card" data-category="{{ destination.category|default_if_none:'' }}">
+      <div class="destination-card" data-category="{{ destination.category|lower }}">
         <div class="card-gradient"></div>
 
         {% if destination.image_url %}
@@ -130,19 +59,22 @@
 
         <div class="card-body">
           <h5 class="card-title">{{ destination.name }}</h5>
+
           {% if destination.city and destination.country %}
             <p class="card-location">{{ destination.city }}, {{ destination.country }}</p>
           {% endif %}
+
           {% if destination.description %}
             <p class="card-description">{{ destination.description|truncatechars:100 }}</p>
           {% endif %}
+
           {% if destination.category %}
             <span class="card-badge">{{ destination.category }}</span>
           {% endif %}
 
           <div class="card-actions">
             <a href="{% url 'destination:edit' destination.destinationID %}" class="btn-edit">Edit</a>
-            <form method="POST" action="{% url 'destination:delete' destination.destinationID %}" onsubmit="return confirmDelete();">
+            <form method="POST" action="{% url 'destination:delete' destination.destinationID %}">
               {% csrf_token %}
               <button type="submit" class="btn-delete">Delete</button>
             </form>
@@ -152,112 +84,35 @@
       {% empty %}
         <p class="no-destinations">No destinations added yet.</p>
       {% endfor %}
-      <p class="no-results" style="display:none;">No destinations match this filter.</p>
     </div>
-
-    <!-- Category Filter JS -->
-    <script>
-      (function() {
-        const buttons = document.querySelectorAll('.filter-btn');
-        const cards = document.querySelectorAll('.destination-card');
-        const noResults = document.querySelector('.no-results');
-        const noDestinationsServer = document.querySelector('.no-destinations');
-
-        function applyFilter(filter) {
-          let visible = 0;
-          cards.forEach(card => {
-            const cat = (card.getAttribute('data-category') || '').trim();
-            if (filter === 'all' || !filter) {
-              card.style.display = '';
-              visible++;
-            } else if (cat.toLowerCase() === filter.toLowerCase()) {
-              card.style.display = '';
-              visible++;
-            } else {
-              card.style.display = 'none';
-            }
-          });
-
-          if (cards.length === 0) {
-            if (noDestinationsServer) noDestinationsServer.style.display = '';
-            if (noResults) noResults.style.display = 'none';
-            return;
-          }
-
-          if (noDestinationsServer) noDestinationsServer.style.display = 'none';
-          if (visible === 0) {
-            if (noResults) noResults.style.display = '';
-          } else {
-            if (noResults) noResults.style.display = 'none';
-          }
-        }
-
-        buttons.forEach(btn => {
-          btn.addEventListener('click', function() {
-            buttons.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            const filter = this.getAttribute('data-filter');
-            applyFilter(filter);
-          });
-        });
-
-        applyFilter('all');
-      })();
-
-      // ✅ Confirmation dialog before deleting
-      function confirmDelete() {
-        return confirm("🗑️ Are you sure you want to delete this destination?");
-      }
-
-      // ✅ Auto-hide flash messages after 3 seconds
-      setTimeout(() => {
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(alert => {
-          alert.style.transition = "opacity 0.5s ease";
-          alert.style.opacity = "0";
-          setTimeout(() => alert.remove(), 500);
-        });
-      }, 3000);
-    </script>
-
-    <!-- ✅ Live Search -->
-    <script>
-      (function() {
-        const searchInput = document.getElementById('searchInput');
-        const searchButton = document.getElementById('searchButton');
-        const categoryFilter = document.getElementById('categoryFilter');
-        const cards = document.querySelectorAll('.destination-card');
-        const noResults = document.querySelector('.no-results');
-
-        function filterDestinations() {
-          const query = searchInput.value.toLowerCase();
-          const selectedCategory = categoryFilter.value.toLowerCase();
-          let visibleCount = 0;
-
-          cards.forEach(card => {
-            const name = card.querySelector('.card-title').textContent.toLowerCase();
-            const category = (card.getAttribute('data-category') || '').toLowerCase();
-
-            const matchesName = name.startsWith(query);
-            const matchesCategory = !selectedCategory || category === selectedCategory;
-
-            if (matchesName && matchesCategory) {
-              card.style.display = '';
-              visibleCount++;
-            } else {
-              card.style.display = 'none';
-            }
-          });
-
-          noResults.style.display = visibleCount === 0 ? '' : 'none';
-        }
-
-        searchInput.addEventListener('input', filterDestinations);
-        categoryFilter.addEventListener('change', filterDestinations);
-        searchButton.addEventListener('click', filterDestinations);
-      })();
-    </script>
-
   </main>
+
+  <!-- JS Filter Logic -->
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    const cards = document.querySelectorAll(".destination-card");
+
+    filterButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        // Remove active state from all buttons
+        filterButtons.forEach(btn => btn.classList.remove("active"));
+        button.classList.add("active");
+
+        const filter = button.dataset.filter;
+
+        cards.forEach(card => {
+          const category = card.dataset.category;
+          if (filter === "all" || category === filter) {
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      });
+    });
+  });
+  </script>
+
 </body>
 </html>
