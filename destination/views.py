@@ -10,6 +10,7 @@ from dashboard.supabase_client import supabase
 def destination_list(request):
 	"""Display the list of destinations and the create/edit form."""
 	# Fetch all destinations from Supabase
+    # current_user_id = request.session.get('supabase_auth_id') 
 	try:
 		resp = supabase.table('destination').select('*').execute()
 		destinations = resp.data if resp.data else []
