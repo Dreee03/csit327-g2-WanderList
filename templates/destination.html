@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Destinations | WanderList</title>
+  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
   <link rel="stylesheet" href="{% static 'css/destination.css' %}">
 </head>
 <body>
@@ -16,7 +17,7 @@
     <nav class="nav">
       <a href="{% url 'dashboard' %}">Dashboard</a>
       <a href="{% url 'destination:list' %}" class="active">Destinations</a>
-      <a href="#">My Lists</a>
+      <a href="{% url 'my_lists' %}">My Maps</a>
       <a href="#">Explore</a>
     </nav>
 

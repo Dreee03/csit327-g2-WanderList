@@ -1,0 +1,197 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Maps | WanderList</title>
+  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    .layout { display: grid; grid-template-columns: 260px 1fr; height: 100%; }
+    .sidebar { background:#111827; color:#fff; padding:24px; display:flex; flex-direction:column; gap:24px; }
+    .sidebar .logo { margin:0; font-size:22px; }
+    .nav a { display:block; color:#cbd5e1; text-decoration:none; padding:10px 12px; border-radius:8px; margin-bottom:6px; }
+    .nav a.active, .nav a:hover { background:#1f2937; color:#fff; }
+    .profile { margin-top:auto; display:flex; align-items:center; gap:10px; }
+    .profile-img { width:36px; height:36px; border-radius:50%; object-fit:cover; }
+    .main { padding:20px; display:flex; flex-direction:column; gap:16px; align-items:center; }
+    .header { width:100%; max-width: 900px; display:flex; justify-content:space-between; align-items:center; }
+    .category-bar { 
+      width:100%; max-width: 900px; display:flex; gap:10px; flex-wrap:wrap; 
+      position: relative; z-index: 2000; margin-bottom: 16px; 
+      pointer-events: auto; user-select: none;
+    }
+    .category-bar .btn { 
+      border:1px solid #cbd5e1; background:#fff; color:#111827; 
+      padding:8px 14px; border-radius:8px; cursor:pointer; 
+      pointer-events: auto; position: relative; z-index: 2001;
+      transition: all 0.2s ease;
+    }
+    .category-bar .btn:hover { 
+      background:#f8fafc; border-color:#94a3b8; 
+    }
+    .category-bar .btn.active { 
+      background:#111827; color:#fff; border-color:#111827; 
+    }
+    .map-wrapper { 
+      width: 1400px; height: 800px; border-radius:12px; 
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15); overflow:hidden; 
+      background:#f1f5f9; position: relative; z-index: 1; 
+      pointer-events: auto; 
+    }
+    .map-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: transparent;
+      z-index: 10;
+      pointer-events: none;
+    }
+    #map { width:100%; height:100%; }
+  </style>
+</head>
+<body>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <h1 class="logo">WanderList</h1>
+      <nav class="nav">
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <a href="{% url 'destination:list' %}">Destinations</a>
+        <a href="{% url 'my_lists' %}" class="active">My Maps</a>
+        <a href="#">Explore</a>
+      </nav>
+      <div class="profile">
+        {% static 'images/profile.jpg' as default_profile %}
+        <img src="{{ profile.profile_pic.url|default:default_profile }}" alt="User" class="profile-img">
+        <span>{{ user.username }}</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="header">
+        <div>
+          <h2>My Maps</h2>
+          <p style="color:#64748b; margin:6px 0 0;">All your destinations, pinned on a map</p>
+        </div>
+      </div>
+
+      <div class="category-bar">
+        <button type="button" class="btn active" data-filter="all">All</button>
+        <button type="button" class="btn" data-filter="Planned">Planned</button>
+        <button type="button" class="btn" data-filter="Visited">Visited</button>
+        <button type="button" class="btn" data-filter="Dreaming">Dreaming</button>
+      </div>
+
+      <div class="map-wrapper">
+        <div id="map"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    (function() {
+      // Prepare map with an initial center so tiles load immediately
+      var map = L.map('map');
+      map.setView([20, 0], 2);
+      var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      // Parse JSON passed from the view (string -> object)
+      var destinations = [];
+      try {
+        destinations = JSON.parse('{{ destinations_json|escapejs }}');
+      } catch (e) {
+        destinations = [];
+      }
+
+      var allMarkers = [];
+      destinations.forEach(function(d) {
+        var lat = d.latitude != null ? parseFloat(d.latitude) : null;
+        var lon = d.longitude != null ? parseFloat(d.longitude) : null;
+        if (!isFinite(lat) || !isFinite(lon)) return;
+        var name = d.name || 'Unknown';
+        var city = d.city || '';
+        var country = d.country || '';
+        var category = d.category || '';
+        var description = d.description || '';
+
+        var marker = L.marker([lat, lon]);
+        var popupHtml = '<strong>' + name + '</strong>' +
+                        (city || country ? '<div style="margin-top:4px; color:#64748b;">' + [city, country].filter(Boolean).join(', ') + '</div>' : '') +
+                        (category ? '<div style="margin-top:6px;"><span style="background:#eef2ff; color:#3730a3; padding:2px 8px; border-radius:999px; font-size:12px;">' + category + '</span></div>' : '') +
+                        (description ? '<p style="margin-top:8px; max-width:260px;">' + description + '</p>' : '');
+        marker.bindPopup(popupHtml);
+        allMarkers.push({ marker: marker, category: String(category || '').toLowerCase() });
+      });
+
+      var markersLayer = L.featureGroup().addTo(map);
+
+      function applyFilter(filter) {
+        markersLayer.clearLayers();
+        var normalized = (filter || 'all').toLowerCase();
+        var visibleMarkers = [];
+        allMarkers.forEach(function(m) {
+          if (normalized === 'all' || m.category === normalized) {
+            markersLayer.addLayer(m.marker);
+            visibleMarkers.push(m.marker);
+          }
+        });
+        if (visibleMarkers.length > 0) {
+          map.fitBounds(L.featureGroup(visibleMarkers).getBounds().pad(0.2));
+        } else {
+          map.setView([20, 0], 2);
+        }
+      }
+
+      // Initial render with all markers
+      applyFilter('all');
+
+      // Wire up category bar with improved event handling
+      var buttons = document.querySelectorAll('.category-bar .btn');
+      buttons.forEach(function(btn){
+        btn.addEventListener('mousedown', function(ev){
+          ev.preventDefault();
+          ev.stopPropagation();
+        });
+        
+        btn.addEventListener('click', function(ev){
+          ev.preventDefault();
+          ev.stopPropagation();
+          ev.stopImmediatePropagation();
+          
+          // Remove active from all buttons
+          buttons.forEach(function(b){ b.classList.remove('active'); });
+          
+          // Add active to clicked button
+          this.classList.add('active');
+          
+          // Apply filter
+          var filter = this.getAttribute('data-filter');
+          applyFilter(filter);
+          
+          return false;
+        }, { passive: false, capture: true });
+        
+        // Prevent any accidental map interactions
+        btn.addEventListener('mouseup', function(ev){
+          ev.preventDefault();
+          ev.stopPropagation();
+        });
+      });
+
+      // Ensure map sizes correctly after layout/ CSS
+      setTimeout(function() { map.invalidateSize(); }, 50);
+      window.addEventListener('resize', function(){ map.invalidateSize(); });
+    })();
+  </script>
+</body>
+</html>
