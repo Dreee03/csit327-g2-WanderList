@@ -28,7 +28,7 @@
     </div>
   </header>
 
-  <!-- ✅ Flash Messages -->
+  <!-- Flash Messages -->
   {% if messages %}
   <div class="message-container">
     {% for message in messages %}
@@ -49,7 +49,7 @@
       </div>
     </div>
 
-    <!-- 🔍 Search + Filter Bar -->
+    <!-- Search + Filter Bar -->
     <div class="search-filter-bar" style="display:flex; gap:10px; align-items:center; margin-bottom:20px;">
       <input 
         type="text" 
@@ -68,7 +68,6 @@
         <option value="Dreaming">Dreaming</option>
       </select>
 
-      <!-- ✅ Search Button -->
       <button 
         id="searchButton"
         style="background-color:#007bff; color:white; border:none; padding:12px 25px; border-radius:8px; cursor:pointer; font-size:16px;"
@@ -125,18 +124,14 @@
         <p class="no-destinations">No destinations added yet.</p>
       {% endfor %}
     </div>
+
   </main>
 
-
-  <!-- ✅ Fixed Combined JS Filter Logic -->
-
-  <!-- JS Filter Logic -->
-
+  <!-- JS Filter + Search Logic -->
   <script>
   document.addEventListener("DOMContentLoaded", () => {
     const filterButtons = document.querySelectorAll(".filter-btn");
     const cards = document.querySelectorAll(".destination-card");
-
     const searchInput = document.getElementById("searchInput");
     const categoryFilter = document.getElementById("categoryFilter");
     const searchButton = document.getElementById("searchButton");
@@ -146,6 +141,7 @@
       const selectedCategory = categoryFilter.value.toLowerCase();
       const activeButton = document.querySelector(".filter-btn.active");
       const buttonCategory = activeButton ? activeButton.dataset.filter : "all";
+
       let visibleCount = 0;
 
       cards.forEach(card => {
@@ -165,7 +161,6 @@
         }
       });
 
-      // Show "no results" message if needed
       let noMsg = document.querySelector(".no-destinations");
       if (!noMsg) {
         noMsg = document.createElement("p");
@@ -176,7 +171,6 @@
       noMsg.style.display = visibleCount === 0 ? "block" : "none";
     }
 
-    // Filter buttons click event
     filterButtons.forEach(button => {
       button.addEventListener("click", () => {
         filterButtons.forEach(btn => btn.classList.remove("active"));
@@ -185,7 +179,6 @@
       });
     });
 
-    // Input and dropdown events
     searchInput.addEventListener("input", filterDestinations);
     categoryFilter.addEventListener("change", filterDestinations);
     searchButton.addEventListener("click", filterDestinations);
@@ -194,47 +187,3 @@
 
 </body>
 </html>
-
-
-    filterButtons.forEach(button => {
-      button.addEventListener("click", () => {
-        // Remove active state from all buttons
-        filterButtons.forEach(btn => btn.classList.remove("active"));
-        button.classList.add("active");
-
-        const filter = button.dataset.filter;
-
-        cards.forEach(card => {
-          const category = card.dataset.category;
-          if (filter === "all" || category === filter) {
-            card.style.display = "block";
-          } else {
-            card.style.display = "none";
-          }
-        });
-      });
-    });
-  });
-  </script>
-
-            if (matchesName && matchesCategory) {
-              card.style.display = '';
-              visibleCount++;
-            } else {
-              card.style.display = 'none';
-            }
-          });
-
-          noResults.style.display = visibleCount === 0 ? '' : 'none';
-        }
-
-        searchInput.addEventListener('input', filterDestinations);
-        categoryFilter.addEventListener('change', filterDestinations);
-        searchButton.addEventListener('click', filterDestinations);
-      })();
-    </script>
-
-  </main>
-</body>
-</html>
->>>>>>> d1f2a3765082c2f487ab6bf988d0b43f22314caf
