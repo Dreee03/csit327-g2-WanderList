@@ -7,6 +7,7 @@
   <title>Destinations | WanderList</title>
   <link rel="stylesheet" href="{% static 'css/theme.css' %}">
   <link rel="stylesheet" href="{% static 'css/destination.css' %}">
+<<<<<<< HEAD
   <style>
     .no-data {
       text-align: center;
@@ -34,18 +35,29 @@
       cursor: pointer;
     }
   </style>
+=======
+>>>>>>> d1f2a3765082c2f487ab6bf988d0b43f22314caf
 </head>
 <body>
 
   <!-- Sidebar -->
   <aside class="sidebar">
     <h1 class="logo">WanderList</h1>
+<<<<<<< HEAD
+=======
+
+>>>>>>> d1f2a3765082c2f487ab6bf988d0b43f22314caf
     <nav class="nav">
       <a href="{% url 'dashboard' %}">Dashboard</a>
       <a href="{% url 'destination:list' %}" class="active">Destinations</a>
       <a href="{% url 'my_lists' %}">My Maps</a>
       <a href="#">Explore</a>
     </nav>
+<<<<<<< HEAD
+=======
+
+    <!-- Profile Section -->
+>>>>>>> d1f2a3765082c2f487ab6bf988d0b43f22314caf
     <div class="profile">
       <img src="{% static 'images/profile.jpg' %}" alt="User" class="profile-img">
       <span>{{ user.username }}</span>
@@ -56,6 +68,10 @@
   <main class="main">
     <div class="container">
 
+<<<<<<< HEAD
+=======
+      <!-- Messages -->
+>>>>>>> d1f2a3765082c2f487ab6bf988d0b43f22314caf
       {% if messages %}
       <div class="messages">
         {% for message in messages %}
@@ -69,6 +85,7 @@
         <a href="{% url 'destination:add_destination' %}" class="add-button">+ Add New Destination</a>
       </div>
 
+<<<<<<< HEAD
       <!-- 🔍 Search & Filter -->
       <div class="filter-bar">
         <input type="text" id="searchInput" placeholder="Search by name, city, country, or description..." class="filter-input">
@@ -87,6 +104,15 @@
         {% if destinations %}
         <div class="table-container">
           <table class="destination-table" id="destinationTable">
+=======
+      <!-- Destination Table -->
+      <div class="card">
+        <h2 class="card-title">All Destinations</h2>
+
+        {% if destinations %}
+        <div class="table-container">
+          <table class="destination-table">
+>>>>>>> d1f2a3765082c2f487ab6bf988d0b43f22314caf
             <thead>
               <tr>
                 <th>Name</th>
@@ -97,9 +123,15 @@
                 <th>Actions</th>
               </tr>
             </thead>
+<<<<<<< HEAD
             <tbody id="destinationTableBody">
               {% for dest in destinations %}
               <tr class="destination-card" data-category="{{ dest.category|lower }}">
+=======
+            <tbody>
+              {% for dest in destinations %}
+              <tr>
+>>>>>>> d1f2a3765082c2f487ab6bf988d0b43f22314caf
                 <td>{{ dest.name }}</td>
                 <td>{{ dest.city }}</td>
                 <td>{{ dest.country }}</td>
@@ -107,6 +139,10 @@
                 <td>{{ dest.description }}</td>
                 <td class="actions">
                   <a href="{% url 'destination:edit' dest.destinationID %}" class="edit-btn">Edit</a>
+<<<<<<< HEAD
+=======
+
+>>>>>>> d1f2a3765082c2f487ab6bf988d0b43f22314caf
                   <form method="POST" action="{% url 'destination:delete' dest.destinationID %}" class="inline">
                     {% csrf_token %}
                     <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this destination?')">Delete</button>
@@ -117,7 +153,10 @@
             </tbody>
           </table>
         </div>
+<<<<<<< HEAD
         <p id="noResults" class="no-data">No destinations found.</p>
+=======
+>>>>>>> d1f2a3765082c2f487ab6bf988d0b43f22314caf
         {% else %}
         <p class="no-data">No destinations added yet.</p>
         {% endif %}
@@ -125,6 +164,7 @@
     </div>
   </main>
 
+<<<<<<< HEAD
   <!-- 🧠 Enhanced Filter Script -->
   <script>
   (() => {
@@ -178,3 +218,7 @@
 
 </body>
 </html>
+=======
+</body>
+</html>
+>>>>>>> d1f2a3765082c2f487ab6bf988d0b43f22314caf

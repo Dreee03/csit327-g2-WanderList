@@ -15,6 +15,13 @@
 
       {% if messages %}
       <div class="alert-container">
+</head>
+<body>
+  <div class="edit-container">
+    <div class="edit-card">
+      <h2 class="edit-title">Edit Destination</h2>
+      {% if messages %}
+      <div>
         {% for message in messages %}
           <div class="alert {{ message.tags }}">{{ message }}</div>
         {% endfor %}
@@ -23,7 +30,6 @@
 
       <form method="POST" class="edit-form">
         {% csrf_token %}
-
         <div class="form-group">
           <label>Name</label>
           <input type="text" name="name" value="{{ destination.name }}" required>
@@ -45,6 +51,7 @@
           <textarea name="description" rows="4" maxlength="500">{{ destination.description }}</textarea>
         </div>
 
+        <!-- Category Field -->
         <div class="form-group">
           <label>Category</label>
           <select name="category" required>
@@ -61,6 +68,8 @@
       </form>
     </div>
   </div>
-
 </body>
 </html>
+</body>
+</html>
+
