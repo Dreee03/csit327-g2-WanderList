@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard | WanderList</title>
+  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
   <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=3">
 </head>
 <body>
@@ -15,7 +16,7 @@
       <a href="#" class="logo-text">WanderList</a>
       <a href="#" class="nav-link active">Dashboard</a>
       <a href="{% url 'destination:list' %}" class="nav-link">Destinations</a>
-      <a href="#" class="nav-link">My Lists</a>
+      <a href="{% url 'my_lists' %}" class="nav-link">My Maps</a>
       <a href="#" class="nav-link">Explore</a>
     </div>
 
@@ -27,6 +28,17 @@
     </div>
   </header>
 
+  <!-- ✅ Flash Messages -->
+  {% if messages %}
+  <div class="message-container">
+    {% for message in messages %}
+      <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
   <!-- Main Content -->
   <main class="main-content">
 
@@ -35,6 +47,34 @@
         <h2>All Destinations</h2>
         <p class="subtext">Manage your travel destinations and bucket list</p>
       </div>
+    </div>
+
+    <!-- 🔍 Search + Filter Bar -->
+    <div class="search-filter-bar" style="display:flex; gap:10px; align-items:center; margin-bottom:20px;">
+      <input 
+        type="text" 
+        id="searchInput"
+        placeholder="Search destinations..." 
+        style="flex:1; padding:12px 15px; border-radius:8px; border:1px solid #ccc; font-size:16px;"
+      >
+
+      <select 
+        id="categoryFilter"
+        style="padding:12px 15px; border-radius:8px; border:1px solid #ccc; font-size:16px;"
+      >
+        <option value="">All Categories</option>
+        <option value="Planned">Planned</option>
+        <option value="Visited">Visited</option>
+        <option value="Dreaming">Dreaming</option>
+      </select>
+
+      <!-- ✅ Search Button -->
+      <button 
+        id="searchButton"
+        style="background-color:#007bff; color:white; border:none; padding:12px 25px; border-radius:8px; cursor:pointer; font-size:16px;"
+      >
+        🔍 Search
+      </button>
     </div>
 
     <!-- Filter Buttons -->
@@ -114,5 +154,23 @@
   });
   </script>
 
+            if (matchesName && matchesCategory) {
+              card.style.display = '';
+              visibleCount++;
+            } else {
+              card.style.display = 'none';
+            }
+          });
+
+          noResults.style.display = visibleCount === 0 ? '' : 'none';
+        }
+
+        searchInput.addEventListener('input', filterDestinations);
+        categoryFilter.addEventListener('change', filterDestinations);
+        searchButton.addEventListener('click', filterDestinations);
+      })();
+    </script>
+
+  </main>
 </body>
 </html>
