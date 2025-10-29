@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Destination | WanderList</title>
+  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+  <link rel="stylesheet" href="{% static 'css/add_destination.css' %}">
+</head>
+<body>
+  <div class="form-container">
+    <h1>Add a New Destination</h1>
+    {% if messages %}
+    <div>
+      {% for message in messages %}
+        <div class="alert {{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <form action="{% url 'destination:create' %}" method="POST">
+  {% csrf_token %}
+  
+  <label for="name">Name:</label>
+  <input type="text" id="name" name="name" required>
+
+  <label for="city">City:</label>
+  <input type="text" id="city" name="city" required>
+
+  <label for="country">Country:</label>
+  <input type="text" id="country" name="country" required>
+
+  <!-- ✅ New Category Dropdown -->
+  <label for="category">Category:</label>
+<select id="category" name="category" required>
+  <option value="">Select a category</option>
+  <option value="Dreaming">Dreaming</option>
+  <option value="Planned">Planned</option>
+  <option value="Visited">Visited</option>
+</select>
+
+
+  <label for="description">Description:</label>
+  <textarea id="description" name="description" rows="4" minlength="0" maxlength="500"></textarea>
+
+  <div class="button-container">
+    <button type="submit" class="btn-save">Save</button>
+    <a href="{% url 'destination:list' %}" class="btn-cancel">Cancel</a>
+  </div>
+</form>
+
+  </div>
+</body>
+</html>

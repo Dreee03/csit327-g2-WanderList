@@ -1,0 +1,191 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | WanderList</title>
+  <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=3">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="navbar">
+    <div class="nav-left">
+      <a href="#" class="logo-text">WanderList</a>
+      <a href="#" class="nav-link active">Dashboard</a>
+      <a href="{% url 'destination:list' %}" class="nav-link">Destinations</a>
+      <a href="{% url 'my_lists' %}" class="nav-link">My Maps</a>
+      <a href="#" class="nav-link">Explore</a>
+    </div>
+
+    <div class="nav-right">
+      {% static 'images/profile.jpg' as default_profile %}
+      <a href="{% url 'profile' %}">
+        <img class="profile" src="{{ profile.profile_pic.url|default:default_profile }}" alt="{{ user.username }}">
+      </a>
+    </div>
+  </header>
+
+  <!-- ✅ Flash Messages -->
+  {% if messages %}
+  <div class="message-container">
+    {% for message in messages %}
+      <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <div class="top-main">
+      <div class="heading">
+        <h2>All Destinations</h2>
+        <p class="subtext">Manage your travel destinations and bucket list</p>
+      </div>
+    </div>
+
+    <!-- 🔍 Search + Filter Bar -->
+    <div class="search-filter-bar" style="display:flex; gap:10px; align-items:center; margin-bottom:20px;">
+      <input 
+        type="text" 
+        id="searchInput"
+        placeholder="Search destinations..." 
+        style="flex:1; padding:12px 15px; border-radius:8px; border:1px solid #ccc; font-size:16px;"
+      >
+
+      <select 
+        id="categoryFilter"
+        style="padding:12px 15px; border-radius:8px; border:1px solid #ccc; font-size:16px;"
+      >
+        <option value="">All Categories</option>
+        <option value="Planned">Planned</option>
+        <option value="Visited">Visited</option>
+        <option value="Dreaming">Dreaming</option>
+      </select>
+
+      <!-- ✅ Search Button -->
+      <button 
+        id="searchButton"
+        style="background-color:#007bff; color:white; border:none; padding:12px 25px; border-radius:8px; cursor:pointer; font-size:16px;"
+      >
+        🔍 Search
+      </button>
+    </div>
+
+    <!-- Filter Buttons -->
+    <div class="filters">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="planned">Planned</button>
+      <button class="filter-btn" data-filter="visited">Visited</button>
+      <button class="filter-btn" data-filter="dreaming">Dreaming</button>
+    </div>
+
+    <!-- Destination Cards -->
+    <div class="destination-grid">
+      {% for destination in destinations %}
+      <div class="destination-card" data-category="{{ destination.category|lower }}">
+        <div class="card-gradient"></div>
+
+        {% if destination.image_url %}
+          <img src="{{ destination.image_url }}" alt="{{ destination.name }}" class="card-img">
+        {% else %}
+          <div class="no-image">No Image</div>
+        {% endif %}
+
+        <div class="card-body">
+          <h5 class="card-title">{{ destination.name }}</h5>
+
+          {% if destination.city and destination.country %}
+            <p class="card-location">{{ destination.city }}, {{ destination.country }}</p>
+          {% endif %}
+
+          {% if destination.description %}
+            <p class="card-description">{{ destination.description|truncatechars:100 }}</p>
+          {% endif %}
+
+          {% if destination.category %}
+            <span class="card-badge">{{ destination.category }}</span>
+          {% endif %}
+
+          <div class="card-actions">
+            <a href="{% url 'destination:edit' destination.destinationID %}" class="btn-edit">Edit</a>
+            <form method="POST" action="{% url 'destination:delete' destination.destinationID %}">
+              {% csrf_token %}
+              <button type="submit" class="btn-delete">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+        <p class="no-destinations">No destinations added yet.</p>
+      {% endfor %}
+    </div>
+  </main>
+
+  <!-- ✅ Fixed Combined JS Filter Logic -->
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    const cards = document.querySelectorAll(".destination-card");
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const searchButton = document.getElementById("searchButton");
+
+    function filterDestinations() {
+      const searchValue = searchInput.value.toLowerCase();
+      const selectedCategory = categoryFilter.value.toLowerCase();
+      const activeButton = document.querySelector(".filter-btn.active");
+      const buttonCategory = activeButton ? activeButton.dataset.filter : "all";
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const name = card.querySelector(".card-title").textContent.toLowerCase();
+        const category = card.dataset.category.toLowerCase();
+
+        const matchesName = name.includes(searchValue);
+        const matchesCategory = 
+          (selectedCategory === "" || category === selectedCategory) &&
+          (buttonCategory === "all" || category === buttonCategory);
+
+        if (matchesName && matchesCategory) {
+          card.style.display = "block";
+          visibleCount++;
+        } else {
+          card.style.display = "none";
+        }
+      });
+
+      // Show "no results" message if needed
+      let noMsg = document.querySelector(".no-destinations");
+      if (!noMsg) {
+        noMsg = document.createElement("p");
+        noMsg.className = "no-destinations";
+        noMsg.textContent = "No destinations found.";
+        document.querySelector(".destination-grid").appendChild(noMsg);
+      }
+      noMsg.style.display = visibleCount === 0 ? "block" : "none";
+    }
+
+    // Filter buttons click event
+    filterButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        filterButtons.forEach(btn => btn.classList.remove("active"));
+        button.classList.add("active");
+        filterDestinations();
+      });
+    });
+
+    // Input and dropdown events
+    searchInput.addEventListener("input", filterDestinations);
+    categoryFilter.addEventListener("change", filterDestinations);
+    searchButton.addEventListener("click", filterDestinations);
+  });
+  </script>
+
+</body>
+</html>
