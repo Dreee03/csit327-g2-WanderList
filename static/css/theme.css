@@ -135,3 +135,4 @@ p, span, div, a, button, input, textarea, select {
 /* Utility spacing */
 .wl-container { max-width: 1200px; margin: 0 auto; padding: 16px; }
 .wl-stack { display:flex; gap:12px; flex-wrap:wrap; }
+
