@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <h1 align="center" style="color:red; background-color:black; padding:10px;">WanderList</h1>
 
 <p align="center" style="color:red; background-color:black;">
@@ -12,7 +12,7 @@ A beginner-friendly Django web application that helps users organize, visualize,
 It allows users to register, log in, and manage their personal travel lists.  
 Each destination can be categorized and displayed on an interactive map for easy visualization of travel goals.
 
----
+
 
 ## Tech Stack Used
 
@@ -47,6 +47,7 @@ Each destination can be categorized and displayed on an interactive map for easy
 
 ## Deployed Link
 Not yet available. The project is currently under local development.
+
 
 
 =======
@@ -100,4 +101,3 @@ Each destination can be categorized and displayed on an interactive map for easy
 Not yet available. The project is currently under local development.
 
 
->>>>>>> d516e5f (Initial project commit with dashboard search and filter feature)
