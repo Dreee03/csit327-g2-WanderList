@@ -8,44 +8,49 @@ import json
 
 
 def dashboard_view(request):
-    """Render the dashboard.html with destinations from Supabase + search & filter."""
+    """Render the dashboard.html with destinations + search & filter."""
     if 'supabase_access_token' not in request.session:
         return redirect('login')
 
     username = request.session.get('logged_in_username', 'User')
     user_obj = SupabaseUser(username=username, is_authenticated=True)
 
-    # Retrieve or create profile record so the navbar can display the profile picture
+    # Retrieve or create profile record so navbar shows profile picture
     profile, _ = UserProfile.objects.get_or_create(username=username)
 
-    # --- NEW: Get search and filter parameters from GET request ---
+    # --- NEW: Get search and filter parameters ---
     query = request.GET.get('q', '').strip()
     category = request.GET.get('category', '').strip()
 
-    # Fetch all destinations from Supabase
-    response = supabase.table("destination").select("*").execute()
-    destination = response.data if response.data else []
+    try:
+        # ✅ Fetch all destinations (no username filter)
+        response = supabase.table("destination").select("*").execute()
+        destinations = response.data if response.data else []
+    except Exception as e:
+        destinations = []
+        messages.error(request, f"❌ Could not fetch destinations: {e}")
 
-    # --- NEW: Apply local filtering ---
+    # --- Apply local filtering ---
     if query:
-        destination = [
-            d for d in destination
+        destinations = [
+            d for d in destinations
             if query.lower() in d.get('name', '').lower()
             or query.lower() in d.get('city', '').lower()
             or query.lower() in d.get('country', '').lower()
             or query.lower() in d.get('description', '').lower()
+            or query.lower() in d.get('notes', '').lower()
         ]
 
     if category:
-        destination = [
-            d for d in destination
+        destinations = [
+            d for d in destinations
             if d.get('category', '').lower() == category.lower()
         ]
 
     context = {
         'user': user_obj,
         'profile': profile,
-        'destinations': destination,
+        'destinations': destinations,
         'query': query,
         'category': category,
     }
@@ -53,13 +58,12 @@ def dashboard_view(request):
 
 
 def my_lists_view(request):
-    """Render a Leaflet map with all destinations as markers."""
+    """Render a Leaflet map with all destinations."""
     if 'supabase_access_token' not in request.session:
         return redirect('login')
 
     username = request.session.get('logged_in_username', 'User')
     user_obj = SupabaseUser(username=username, is_authenticated=True)
-
     profile, _ = UserProfile.objects.get_or_create(username=username)
 
     try:
@@ -72,21 +76,18 @@ def my_lists_view(request):
     context = {
         'user': user_obj,
         'profile': profile,
-        # Serialize to JSON for safe JS consumption in template
         'destinations_json': json.dumps(destinations),
     }
     return render(request, 'my_lists.html', context)
 
 
 def profile_view(request):
-    """Render an editable user profile page with image upload."""
+    """Render an editable user profile page."""
     if 'supabase_access_token' not in request.session:
         return redirect('login')
 
     username = request.session.get('logged_in_username', 'User')
     user_obj = SupabaseUser(username=username, is_authenticated=True)
-
-    # Retrieve or create profile record
     profile, _ = UserProfile.objects.get_or_create(username=username)
 
     if request.method == 'POST':
@@ -116,11 +117,8 @@ def add_destination(request):
         latitude = request.POST.get("latitude")
         longitude = request.POST.get("longitude")
         description = request.POST.get("description")
-
-        category = request.POST.get("category")  # ✅ new field from form
-
         category = request.POST.get("category", "")
-
+        notes = request.POST.get("notes", "")  # ✅ NEW: Add notes support
 
         data = {
             "name": name,
@@ -130,6 +128,7 @@ def add_destination(request):
             "longitude": float(longitude) if longitude else None,
             "description": description,
             "category": category,
+            "notes": notes,  # ✅ Save notes to Supabase
         }
 
         try:
@@ -147,28 +146,27 @@ def add_destination(request):
 def edit_destination(request, destination_id):
     """Fetch and update a destination from Supabase."""
     try:
-        # Fetch the existing destination
         result = supabase.table('destination').select('*').eq('destinationID', destination_id).execute()
         destination = result.data[0] if result.data else None
 
         if not destination:
             messages.error(request, 'Destination not found.')
-            return redirect(reverse('destination:list'))
+            return redirect('dashboard')
     except Exception as e:
         messages.error(request, f'Error loading destination: {e}')
-        return redirect(reverse('destination:list'))
+        return redirect('dashboard')
 
-    # ✅ Handle POST (update data)
     if request.method == 'POST':
         name = request.POST.get('name')
         city = request.POST.get('city')
         country = request.POST.get('country')
         description = request.POST.get('description')
         category = request.POST.get('category')
-        
+        notes = request.POST.get('notes', '')  # ✅ Handle notes in edit form
+
         if not name or not city or not country:
             messages.error(request, "Please fill out all required fields.")
-            return render(request, 'destination/edit_destination.html', {'destination': destination})
+            return render(request, 'edit_destination.html', {'destination': destination})
 
         payload = {
             'name': name,
@@ -176,16 +174,16 @@ def edit_destination(request, destination_id):
             'country': country,
             'category': category,
             'description': description,
+            'notes': notes,  # ✅ Save updated notes
         }
 
         try:
             supabase.table('destination').update(payload).eq('destinationID', destination_id).execute()
-            messages.success(request, 'Destination updated successfully!')
-            return redirect(reverse('destination:list'))
+            messages.success(request, '✅ Destination updated successfully!')
+            return redirect('dashboard')
         except Exception as e:
-            messages.error(request, f'Could not update destination: {e}')
+            messages.error(request, f'❌ Could not update destination: {e}')
 
-    # ✅ Handle GET (load page)
     return render(request, 'edit_destination.html', {'destination': destination})
 
 

@@ -11,6 +11,7 @@
 <body>
   <div class="form-container">
     <h1>Add a New Destination</h1>
+
     {% if messages %}
     <div>
       {% for message in messages %}
@@ -18,37 +19,40 @@
       {% endfor %}
     </div>
     {% endif %}
+
     <form action="{% url 'destination:create' %}" method="POST">
-  {% csrf_token %}
-  
-  <label for="name">Name:</label>
-  <input type="text" id="name" name="name" required>
+      {% csrf_token %}
 
-  <label for="city">City:</label>
-  <input type="text" id="city" name="city" required>
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
 
-  <label for="country">Country:</label>
-  <input type="text" id="country" name="country" required>
+      <label for="city">City:</label>
+      <input type="text" id="city" name="city" required>
 
-  <!-- ✅ New Category Dropdown -->
-  <label for="category">Category:</label>
-<select id="category" name="category" required>
-  <option value="">Select a category</option>
-  <option value="Dreaming">Dreaming</option>
-  <option value="Planned">Planned</option>
-  <option value="Visited">Visited</option>
-</select>
+      <label for="country">Country:</label>
+      <input type="text" id="country" name="country" required>
 
+      <!-- ✅ Category Dropdown -->
+      <label for="category">Category:</label>
+      <select id="category" name="category" required>
+        <option value="">Select a category</option>
+        <option value="Dreaming">Dreaming</option>
+        <option value="Planned">Planned</option>
+        <option value="Visited">Visited</option>
+      </select>
 
-  <label for="description">Description:</label>
-  <textarea id="description" name="description" rows="4" minlength="0" maxlength="500"></textarea>
+      <label for="description">Description:</label>
+      <textarea id="description" name="description" rows="4" maxlength="500"></textarea>
 
-  <div class="button-container">
-    <button type="submit" class="btn-save">Save</button>
-    <a href="{% url 'destination:list' %}" class="btn-cancel">Cancel</a>
-  </div>
-</form>
+      <!-- ✅ New Notes / Journal Entry Field -->
+      <label for="notes">Notes / Journal Entry (optional):</label>
+      <textarea id="notes" name="notes" rows="4" placeholder="Write your travel notes or journal entry here..."></textarea>
 
+      <div class="button-container">
+        <button type="submit" class="btn-save">Save</button>
+        <a href="{% url 'destination:list' %}" class="btn-cancel">Cancel</a>
+      </div>
+    </form>
   </div>
 </body>
 </html>

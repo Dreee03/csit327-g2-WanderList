@@ -6,11 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard | WanderList</title>
   <link rel="stylesheet" href="{% static 'css/theme.css' %}">
-  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=3">
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=6">
 </head>
 <body>
 
-  <!-- Top Navbar -->
+  <!-- ✅ Navbar -->
   <header class="navbar">
     <div class="nav-left">
       <a href="#" class="logo-text">WanderList</a>
@@ -28,7 +28,7 @@
     </div>
   </header>
 
-  <!-- Flash Messages -->
+  <!-- ✅ Flash Messages -->
   {% if messages %}
   <div class="message-container">
     {% for message in messages %}
@@ -39,18 +39,18 @@
   </div>
   {% endif %}
 
-  <!-- Main Content -->
+  <!-- ✅ Main Section -->
   <main class="main-content">
 
     <div class="top-main">
       <div class="heading">
         <h2>All Destinations</h2>
-        <p class="subtext">Manage your travel destinations and bucket list</p>
+        <p class="subtext">Manage your travel destinations and personal notes</p>
       </div>
     </div>
 
-    <!-- Search + Filter Bar -->
-    <div class="search-filter-bar" style="display:flex; gap:10px; align-items:center; margin-bottom:20px;">
+    <!-- ✅ Search + Filter Bar -->
+    <div class="search-filter-bar" style="display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap: wrap;">
       <input 
         type="text" 
         id="searchInput"
@@ -76,7 +76,7 @@
       </button>
     </div>
 
-    <!-- Filter Buttons -->
+    <!-- ✅ Filter Buttons -->
     <div class="filters">
       <button class="filter-btn active" data-filter="all">All</button>
       <button class="filter-btn" data-filter="planned">Planned</button>
@@ -84,7 +84,7 @@
       <button class="filter-btn" data-filter="dreaming">Dreaming</button>
     </div>
 
-    <!-- Destination Cards -->
+    <!-- ✅ Destination Cards -->
     <div class="destination-grid">
       {% for destination in destinations %}
       <div class="destination-card" data-category="{{ destination.category|lower }}">
@@ -107,6 +107,16 @@
             <p class="card-description">{{ destination.description|truncatechars:100 }}</p>
           {% endif %}
 
+          <!-- ✅ Notes Section -->
+          <div class="card-notes" style="margin-top:10px; background:#f9f9f9; padding:10px; border-radius:8px;">
+            <strong>📝 Notes:</strong>
+            {% if destination.notes %}
+              <p style="margin-top:5px; white-space:pre-wrap;">{{ destination.notes|linebreaksbr|truncatechars:150 }}</p>
+            {% else %}
+              <p style="margin-top:5px; color:#888;">No notes added yet.</p>
+            {% endif %}
+          </div>
+
           {% if destination.category %}
             <span class="card-badge">{{ destination.category }}</span>
           {% endif %}
@@ -127,7 +137,7 @@
 
   </main>
 
-  <!-- JS Filter + Search Logic -->
+  <!-- ✅ JS for Search + Filter -->
   <script>
   document.addEventListener("DOMContentLoaded", () => {
     const filterButtons = document.querySelectorAll(".filter-btn");
@@ -141,14 +151,15 @@
       const selectedCategory = categoryFilter.value.toLowerCase();
       const activeButton = document.querySelector(".filter-btn.active");
       const buttonCategory = activeButton ? activeButton.dataset.filter : "all";
-
       let visibleCount = 0;
 
       cards.forEach(card => {
         const name = card.querySelector(".card-title").textContent.toLowerCase();
         const category = card.dataset.category.toLowerCase();
 
-        const matchesName = name.includes(searchValue);
+        // ✅ Match only destinations that START with the search text
+        const matchesName = searchValue === "" || name.startsWith(searchValue);
+
         const matchesCategory = 
           (selectedCategory === "" || category === selectedCategory) &&
           (buttonCategory === "all" || category === buttonCategory);
@@ -161,6 +172,7 @@
         }
       });
 
+      // ✅ Show "No destinations found" dynamically
       let noMsg = document.querySelector(".no-destinations");
       if (!noMsg) {
         noMsg = document.createElement("p");
