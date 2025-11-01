@@ -8,25 +8,21 @@ import json
 
 
 def dashboard_view(request):
-    """Render the dashboard.html with destinations from Supabase + search & filter."""
+    # This view is unchanged
     if 'supabase_access_token' not in request.session:
         return redirect('login')
 
     username = request.session.get('logged_in_username', 'User')
     user_obj = SupabaseUser(username=username, is_authenticated=True)
 
-    # Retrieve or create profile record so the navbar can display the profile picture
     profile, _ = UserProfile.objects.get_or_create(username=username)
 
-    # --- NEW: Get search and filter parameters from GET request ---
     query = request.GET.get('q', '').strip()
     category = request.GET.get('category', '').strip()
 
-    # Fetch all destinations from Supabase
     response = supabase.table("destination").select("*").execute()
     destination = response.data if response.data else []
 
-    # --- NEW: Apply local filtering ---
     if query:
         destination = [
             d for d in destination
@@ -53,7 +49,7 @@ def dashboard_view(request):
 
 
 def my_lists_view(request):
-    """Render a Leaflet map with all destinations as markers."""
+    # This view is unchanged
     if 'supabase_access_token' not in request.session:
         return redirect('login')
 
@@ -72,7 +68,6 @@ def my_lists_view(request):
     context = {
         'user': user_obj,
         'profile': profile,
-        # Serialize to JSON for safe JS consumption in template
         'destinations_json': json.dumps(destinations),
     }
     return render(request, 'my_lists.html', context)
@@ -86,8 +81,41 @@ def profile_view(request):
     username = request.session.get('logged_in_username', 'User')
     user_obj = SupabaseUser(username=username, is_authenticated=True)
 
-    # Retrieve or create profile record
-    profile, _ = UserProfile.objects.get_or_create(username=username)
+    # This will now find the profile created during registration
+    profile, created = UserProfile.objects.get_or_create(username=username)
+    
+    # ✅ --- START: Get Destination Stats & Lists ---
+    stats = {'Planned': 0, 'Visited': 0, 'Dreaming': 0, 'Total': 0}
+    
+    # Create lists to hold the actual destinations for the modal
+    planned_destinations = []
+    visited_destinations = []
+    dreaming_destinations = []
+    
+    try:
+        # Fetch the data needed for the lists
+        # Note: This fetches destinations for *all* users.
+        response = supabase.table("destination").select("category, name, image_url").execute()
+        
+        if response.data:
+            all_destinations = response.data
+            stats['Total'] = len(all_destinations)
+            
+            for dest in all_destinations:
+                category = dest.get('category')
+                if category == 'Planned':
+                    stats['Planned'] += 1
+                    planned_destinations.append(dest)
+                elif category == 'Visited':
+                    stats['Visited'] += 1
+                    visited_destinations.append(dest)
+                elif category == 'Dreaming':
+                    stats['Dreaming'] += 1
+                    dreaming_destinations.append(dest)
+    except Exception as e:
+        messages.error(request, f"Could not load destination stats: {e}")
+    # ✅ --- END: Get Destination Stats & Lists ---
+
 
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
@@ -102,11 +130,15 @@ def profile_view(request):
         'user': user_obj,
         'form': form,
         'profile': profile,
+        'stats': stats, # Pass stats (counts)
+        'planned_destinations': planned_destinations, # ✅ Pass lists
+        'visited_destinations': visited_destinations,
+        'dreaming_destinations': dreaming_destinations,
     }
     return render(request, 'profile.html', context)
 
 
-# ✅ ADD DESTINATION
+# These functions are unchanged from your file
 def add_destination(request):
     """Add a new destination to Supabase."""
     if request.method == "POST":
@@ -139,7 +171,6 @@ def add_destination(request):
     return render(request, "add_destination.html")
 
 
-# ✅ EDIT DESTINATION
 def edit_destination(request, destination_id):
     """Edit an existing destination."""
     if request.method == "POST":
@@ -172,7 +203,6 @@ def edit_destination(request, destination_id):
     return render(request, "edit_destination.html", {"destination": destination})
 
 
-# ✅ DELETE DESTINATION
 def delete_destination(request, destination_id):
     """Delete a destination with confirmation."""
     if request.method == "POST":
@@ -181,4 +211,5 @@ def delete_destination(request, destination_id):
             messages.success(request, "🗑️ Destination deleted successfully!")
         except Exception as e:
             messages.error(request, f"❌ Could not delete destination: {e}")
-        return redirect("dashboard")
+    
+    return redirect("dashboard")
