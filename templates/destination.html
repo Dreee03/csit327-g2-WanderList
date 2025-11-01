@@ -10,7 +10,6 @@
 </head>
 <body>
 
-  <!-- Sidebar -->
   <aside class="sidebar">
     <h1 class="logo">WanderList</h1>
 
@@ -21,18 +20,15 @@
       <a href="#">Explore</a>
     </nav>
 
-    <!-- Profile Section -->
     <div class="profile">
       <img src="{% static 'images/profile.jpg' %}" alt="User" class="profile-img">
       <span>{{ user.username }}</span>
     </div>
   </aside>
 
-  <!-- Main Content -->
   <main class="main">
     <div class="container">
 
-      <!-- Messages -->
       {% if messages %}
       <div class="messages">
         {% for message in messages %}
@@ -41,12 +37,10 @@
       </div>
       {% endif %}
 
-      <!-- Add Destination Button -->
       <div class="add-button-container">
         <a href="{% url 'destination:add_destination' %}" class="add-button">+ Add New Destination</a>
       </div>
 
-      <!-- Destination Table -->
       <div class="card">
         <h2 class="card-title">All Destinations</h2>
 
@@ -72,6 +66,7 @@
                 <td>{{ dest.category }}</td>
                 <td>{{ dest.description }}</td>
                 <td class="actions">
+                  <a href="{% url 'my_lists' %}?dest_id={{ dest.destinationID }}" class="view-btn">View Map</a>
                   <a href="{% url 'destination:edit' dest.destinationID %}" class="edit-btn">Edit</a>
 
                   <form method="POST" action="{% url 'destination:delete' dest.destinationID %}" class="inline">
