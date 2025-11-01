@@ -90,8 +90,8 @@
       <div class="destination-card" data-category="{{ destination.category|lower }}">
         <div class="card-gradient"></div>
 
-        {% if destination.image_url %}
-          <img src="{{ destination.image_url }}" alt="{{ destination.name }}" class="card-img">
+        {% if destination.destination_image %}
+          <img src="{{ destination.destination_image }}" alt="{{ destination.name }}" class="card-img">
         {% else %}
           <div class="no-image">No Image</div>
         {% endif %}

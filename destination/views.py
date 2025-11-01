@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_protect
-from dashboard.supabase_client import supabase
+from wanderlist.supabase_client import supabase
 
 
 def destination_list(request):
@@ -44,6 +44,7 @@ def create_destination(request):
     # Get the current user's ID
     custom_user_id = request.session.get('custom_user_id')
 
+    destination_image = (request.POST.get('destination_image') or '').strip()
     name = (request.POST.get('name') or '').strip()
     city = (request.POST.get('city') or '').strip()
     country = (request.POST.get('country') or '').strip()
@@ -62,6 +63,7 @@ def create_destination(request):
         return redirect('destination:add_destination')
 
     data = {
+        'destination_image': destination_image or None,  # ✅ Save null if empty
         'name': name,
         'city': city,
         'country': country,
@@ -101,6 +103,7 @@ def edit_destination(request, destination_id):
 
     # ✅ Handle update
     if request.method == 'POST':
+        destination_image = (request.POST.get('destination_image') or '').strip()
         name = (request.POST.get('name') or '').strip()
         city = (request.POST.get('city') or '').strip()
         country = (request.POST.get('country') or '').strip()
@@ -117,6 +120,7 @@ def edit_destination(request, destination_id):
             return render(request, 'edit_destination.html', {'destination': destination})
 
         payload = {
+            'destination_image': destination_image or None,  # ✅ Update image too
             'name': name,
             'city': city,
             'country': country,

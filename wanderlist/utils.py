@@ -1,4 +1,4 @@
-from dashboard.supabase_client import supabase
+from wanderlist.supabase_client import supabase
 
 
 def register_user(email, password, username):
@@ -59,7 +59,6 @@ def login_user(username, password):
 
 
 def supabase_sign_out():
-    from dashboard.supabase_client import supabase
     try:
         supabase.auth.sign_out()
     except Exception:

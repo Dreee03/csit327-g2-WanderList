@@ -25,6 +25,11 @@
       <!-- ✅ Edit Destination Form -->
       <form method="POST" class="edit-form">
         {% csrf_token %}
+        
+        <div class="form-group">
+          <label for="destination_image">Destination Image URL (optional):</label>
+          <input type="url" id="destination_image" name="destination_image" value="{{ destination.destination_image }}" placeholder="Enter image URL">
+        </div>
 
         <!-- Destination Name -->
         <div class="form-group">

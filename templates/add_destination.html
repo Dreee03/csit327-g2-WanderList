@@ -23,6 +23,9 @@
     <form action="{% url 'destination:create' %}" method="POST">
       {% csrf_token %}
 
+      <label for="destination_image">Destination Image URL (optional):</label>
+      <input type="url" id="destination_image" name="destination_image" value="{{ destination.destination_image }}" placeholder="Enter image URL">
+
       <label for="name">Name:</label>
       <input type="text" id="name" name="name" required>
 

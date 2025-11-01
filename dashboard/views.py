@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from accounts.forms import SupabaseUser
 from .models import UserProfile
 from .forms import ProfileForm
-from .supabase_client import supabase
+from wanderlist.supabase_client import supabase
 from django.contrib import messages
 import json
 
@@ -66,9 +66,10 @@ def my_lists_view(request):
     username = request.session.get('logged_in_username', 'User')
     user_obj = SupabaseUser(username=username, is_authenticated=True)
     profile, _ = UserProfile.objects.get_or_create(username=username)
+    custom_user_id = request.session.get('custom_user_id')
 
     try:
-        response = supabase.table("destination").select("*").execute()
+        response = supabase.table("destination").select("*").eq("user_id", custom_user_id).execute()
         destinations = response.data if response.data else []
     except Exception as e:
         destinations = []
@@ -118,6 +119,7 @@ def add_destination(request):
     custom_user_id = request.session.get('custom_user_id')
 
     if request.method == "POST":
+        destination_image = (request.POST.get("destination_image") or "").strip()
         name = request.POST.get("name")
         city = request.POST.get("city")
         country = request.POST.get("country")
@@ -128,6 +130,7 @@ def add_destination(request):
         notes = request.POST.get("notes", "")
 
         data = {
+            "destination_image": destination_image or None,  # Save null if empty
             "name": name,
             "city": city,
             "country": country,
@@ -170,6 +173,7 @@ def edit_destination(request, destination_id):
         return redirect('dashboard')
 
     if request.method == 'POST':
+        destination_image = (request.POST.get('destination_image') or '').strip()
         name = request.POST.get('name')
         city = request.POST.get('city')
         country = request.POST.get('country')
@@ -182,6 +186,7 @@ def edit_destination(request, destination_id):
             return render(request, 'edit_destination.html', {'destination': destination})
 
         payload = {
+            'destination_image': destination_image or None,  # ✅ Update image too
             'name': name,
             'city': city,
             'country': country,
