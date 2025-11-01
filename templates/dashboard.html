@@ -6,11 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard | WanderList</title>
   <link rel="stylesheet" href="{% static 'css/theme.css' %}">
-  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=3">
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=6">
 </head>
 <body>
 
-  <!-- Top Navbar -->
+  <!-- ✅ Navbar -->
   <header class="navbar">
     <div class="nav-left">
       <a href="#" class="logo-text">WanderList</a>
@@ -39,18 +39,18 @@
   </div>
   {% endif %}
 
-  <!-- Main Content -->
+  <!-- ✅ Main Section -->
   <main class="main-content">
 
     <div class="top-main">
       <div class="heading">
         <h2>All Destinations</h2>
-        <p class="subtext">Manage your travel destinations and bucket list</p>
+        <p class="subtext">Manage your travel destinations and personal notes</p>
       </div>
     </div>
 
-    <!-- 🔍 Search + Filter Bar -->
-    <div class="search-filter-bar" style="display:flex; gap:10px; align-items:center; margin-bottom:20px;">
+    <!-- ✅ Search + Filter Bar -->
+    <div class="search-filter-bar" style="display:flex; gap:10px; align-items:center; margin-bottom:20px; flex-wrap: wrap;">
       <input 
         type="text" 
         id="searchInput"
@@ -68,7 +68,6 @@
         <option value="Dreaming">Dreaming</option>
       </select>
 
-      <!-- ✅ Search Button -->
       <button 
         id="searchButton"
         style="background-color:#007bff; color:white; border:none; padding:12px 25px; border-radius:8px; cursor:pointer; font-size:16px;"
@@ -77,7 +76,7 @@
       </button>
     </div>
 
-    <!-- Filter Buttons -->
+    <!-- ✅ Filter Buttons -->
     <div class="filters">
       <button class="filter-btn active" data-filter="all">All</button>
       <button class="filter-btn" data-filter="planned">Planned</button>
@@ -85,7 +84,7 @@
       <button class="filter-btn" data-filter="dreaming">Dreaming</button>
     </div>
 
-    <!-- Destination Cards -->
+    <!-- ✅ Destination Cards -->
     <div class="destination-grid">
       {% for destination in destinations %}
       <div class="destination-card" data-category="{{ destination.category|lower }}">
@@ -108,6 +107,16 @@
             <p class="card-description">{{ destination.description|truncatechars:100 }}</p>
           {% endif %}
 
+          <!-- ✅ Notes Section -->
+          <div class="card-notes" style="margin-top:10px; background:#f9f9f9; padding:10px; border-radius:8px;">
+            <strong>📝 Notes:</strong>
+            {% if destination.notes %}
+              <p style="margin-top:5px; white-space:pre-wrap;">{{ destination.notes|linebreaksbr|truncatechars:150 }}</p>
+            {% else %}
+              <p style="margin-top:5px; color:#888;">No notes added yet.</p>
+            {% endif %}
+          </div>
+
           {% if destination.category %}
             <span class="card-badge">{{ destination.category }}</span>
           {% endif %}
@@ -125,52 +134,68 @@
         <p class="no-destinations">No destinations added yet.</p>
       {% endfor %}
     </div>
+
   </main>
 
-  <!-- JS Filter Logic -->
+  <!-- ✅ JS for Search + Filter -->
   <script>
   document.addEventListener("DOMContentLoaded", () => {
     const filterButtons = document.querySelectorAll(".filter-btn");
     const cards = document.querySelectorAll(".destination-card");
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const searchButton = document.getElementById("searchButton");
+
+    function filterDestinations() {
+      const searchValue = searchInput.value.toLowerCase();
+      const selectedCategory = categoryFilter.value.toLowerCase();
+      const activeButton = document.querySelector(".filter-btn.active");
+      const buttonCategory = activeButton ? activeButton.dataset.filter : "all";
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const name = card.querySelector(".card-title").textContent.toLowerCase();
+        const category = card.dataset.category.toLowerCase();
+
+        // ✅ Match only destinations that START with the search text
+        const matchesName = searchValue === "" || name.startsWith(searchValue);
+
+        const matchesCategory = 
+          (selectedCategory === "" || category === selectedCategory) &&
+          (buttonCategory === "all" || category === buttonCategory);
+
+        if (matchesName && matchesCategory) {
+          card.style.display = "block";
+          visibleCount++;
+        } else {
+          card.style.display = "none";
+        }
+      });
+
+      // ✅ Show "No destinations found" dynamically
+      let noMsg = document.querySelector(".no-destinations");
+      if (!noMsg) {
+        noMsg = document.createElement("p");
+        noMsg.className = "no-destinations";
+        noMsg.textContent = "No destinations found.";
+        document.querySelector(".destination-grid").appendChild(noMsg);
+      }
+      noMsg.style.display = visibleCount === 0 ? "block" : "none";
+    }
 
     filterButtons.forEach(button => {
       button.addEventListener("click", () => {
-        // Remove active state from all buttons
         filterButtons.forEach(btn => btn.classList.remove("active"));
         button.classList.add("active");
-
-        const filter = button.dataset.filter;
-
-        cards.forEach(card => {
-          const category = card.dataset.category;
-          if (filter === "all" || category === filter) {
-            card.style.display = "block";
-          } else {
-            card.style.display = "none";
-          }
-        });
+        filterDestinations();
       });
     });
+
+    searchInput.addEventListener("input", filterDestinations);
+    categoryFilter.addEventListener("change", filterDestinations);
+    searchButton.addEventListener("click", filterDestinations);
   });
   </script>
 
-            if (matchesName && matchesCategory) {
-              card.style.display = '';
-              visibleCount++;
-            } else {
-              card.style.display = 'none';
-            }
-          });
-
-          noResults.style.display = visibleCount === 0 ? '' : 'none';
-        }
-
-        searchInput.addEventListener('input', filterDestinations);
-        categoryFilter.addEventListener('change', filterDestinations);
-        searchButton.addEventListener('click', filterDestinations);
-      })();
-    </script>
-
-  </main>
 </body>
 </html>

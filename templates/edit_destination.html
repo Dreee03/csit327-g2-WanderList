@@ -3,57 +3,78 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Destination | WanderList</title>
   <link rel="stylesheet" href="{% static 'css/theme.css' %}">
+  <link rel="stylesheet" href="{% static 'css/edit_destination.css' %}">
 </head>
 <body>
   <div class="edit-container">
     <div class="edit-card">
-      <h2 class="edit-title">Edit Destination</h2>
+      <h1 class="edit-title">Edit Destination</h1>
+
+      <!-- ✅ Display success/error messages -->
       {% if messages %}
-      <div>
+      <div class="alert-container">
         {% for message in messages %}
           <div class="alert {{ message.tags }}">{{ message }}</div>
         {% endfor %}
       </div>
       {% endif %}
 
+      <!-- ✅ Edit Destination Form -->
       <form method="POST" class="edit-form">
         {% csrf_token %}
-        
+
+        <!-- Destination Name -->
         <div class="form-group">
-          <label>Name</label>
-          <input type="text" name="name" value="{{ destination.name }}" required>
+          <label for="name">Destination Name</label>
+          <input type="text" id="name" name="name" value="{{ destination.name }}" required>
         </div>
 
+        <!-- City and Country -->
         <div class="form-row">
           <div class="form-group">
-            <label>City</label>
-          <input type="text" name="city" value="{{ destination.city }}" required>
+            <label for="city">City</label>
+            <input type="text" id="city" name="city" value="{{ destination.city }}" required>
           </div>
           <div class="form-group">
-            <label>Country</label>
-            <input type="text" name="country" value="{{ destination.country }}" required>
+            <label for="country">Country</label>
+            <input type="text" id="country" name="country" value="{{ destination.country }}" required>
           </div>
         </div>
 
+        <!-- Description -->
         <div class="form-group">
-          <label>Description</label>
-          <textarea name="description" rows="4" maxlength="500">{{ destination.description }}</textarea>
+          <label for="description">Description</label>
+          <textarea id="description" name="description" rows="4" maxlength="500" placeholder="Describe the destination...">{{ destination.description }}</textarea>
         </div>
 
-        <!-- Category Field -->
+        <!-- Category -->
         <div class="form-group">
-          <label>Category</label>
-          <select name="category" required>
+          <label for="category">Category</label>
+          <select id="category" name="category" required>
+            <option value="Dreaming" {% if destination.category == "Dreaming" %}selected{% endif %}>Dreaming</option>
             <option value="Planned" {% if destination.category == "Planned" %}selected{% endif %}>Planned</option>
             <option value="Visited" {% if destination.category == "Visited" %}selected{% endif %}>Visited</option>
-            <option value="Dreaming" {% if destination.category == "Dreaming" %}selected{% endif %}>Dreaming</option>
           </select>
         </div>
 
+        <!-- ✅ Notes / Journal Entry -->
+        <div class="form-group">
+          <label for="notes">Notes / Journal Entry</label>
+          <textarea 
+            id="notes" 
+            name="notes" 
+            rows="4" 
+            maxlength="1000" 
+            placeholder="Write your travel memories or reflections here...">{{ destination.notes }}</textarea>
+        </div>
+
+        <!-- ✅ Buttons -->
         <div class="button-row">
-          <a href="{% url 'destination:list' %}" class="cancel-btn">Cancel</a>
+          <!-- Cancel now safely redirects without submitting -->
+          <a href="{% url 'dashboard' %}" class="cancel-btn" onclick="return confirm('Discard changes and go back?')">Cancel</a>
           <button type="submit" class="save-btn">Save Changes</button>
         </div>
       </form>
